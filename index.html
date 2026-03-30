@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPM - خارطة الأداء الذكية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #0D1B5E;
+      --primary-light: #1a2d8f;
+      --accent: #00C9B1;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --success: #10B981;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F4F8; transition: background 0.3s, color 0.3s; }
+
+    /* ══════════════════════════════════════════════════════════
+       MODERN GLASS NAV
+       ══════════════════════════════════════════════════════════ */
+    .spm-nav {
+      position: sticky; top: 0; z-index: 500;
+      height: 62px; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,27,94,0.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      animation: spmNavIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .spm-nav.scrolled {
+      background: rgba(13,27,94,0.98);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+    }
+    @keyframes spmNavIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+    .spm-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: white; flex-shrink: 0;
+    }
+    .spm-logo {
+      background: linear-gradient(135deg,#00C9B1,#00b0a0);
+      border-radius: 10px; padding: 6px 11px;
+      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #0D1B5E;
+      box-shadow: 0 0 18px rgba(0,201,177,0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .spm-brand:hover .spm-logo {
+      transform: scale(1.1) rotate(-3deg);
+      box-shadow: 0 0 28px rgba(0,201,177,0.65);
+    }
+    .spm-brand-text { display: flex; flex-direction: column; }
+    .spm-brand-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
+    .spm-brand-sub  { font-size: 10px; opacity: 0.4; letter-spacing: 0.3px; }
+    .spm-pill-track {
+      display: flex; align-items: center;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50px; padding: 4px 5px; gap: 2px;
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+    .spm-link {
+      padding: 7px 16px; border-radius: 50px;
+      font-size: 12.5px; font-weight: 600;
+      text-decoration: none; color: rgba(255,255,255,0.52);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+    }
+    .spm-link:hover { color: white; background: rgba(255,255,255,0.11); transform: translateY(-1px); }
+    .spm-link.active {
+      color: white; background: rgba(255,255,255,0.18);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .spm-nav-actions { display: flex; align-items: center; gap: 6px; }
+    .spm-act-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 13px; border-radius: 10px;
+      font-size: 12.5px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .spm-act-tour { background: rgba(0,201,177,0.12); color: #00C9B1; border-color: rgba(0,201,177,0.22); }
+    .spm-act-tour:hover { background: rgba(0,201,177,0.28); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,201,177,0.22); }
+    .spm-act-dark { background: rgba(255,255,255,0.07); color: white; font-size: 15px; border-color: rgba(255,255,255,0.1); padding: 7px 10px; }
+    .spm-act-dark:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px) rotate(20deg); }
+    .spm-hamburger {
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px; width: 40px; height: 40px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; cursor: pointer; transition: background 0.2s;
+    }
+    .spm-hamburger:hover { background: rgba(255,255,255,0.18); }
+    .spm-hamburger span {
+      display: block; width: 18px; height: 2px; background: white; border-radius: 2px;
+      transition: transform 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.25s;
+      transform-origin: center;
+    }
+    .spm-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .spm-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .spm-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .spm-mobile-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(7,14,40,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
+    }
+    .spm-mobile-overlay.open { opacity: 1; pointer-events: all; }
+    .spm-mob-close {
+      position: absolute; top: 18px; left: 18px;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      color: white; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .spm-mob-close:hover { background: rgba(255,255,255,0.18); }
+    .spm-mob-links { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; padding: 0 28px; }
+    .spm-mob-link {
+      display: block; width: 100%; max-width: 340px; padding: 16px 24px;
+      border-radius: 14px; font-size: 16px; font-weight: 700; text-align: center;
+      text-decoration: none; color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+      opacity: 0; transform: translateY(24px); transition: all 0.28s ease;
+    }
+    .spm-mobile-overlay.open .spm-mob-link { opacity: 1; transform: translateY(0); }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(1) { transition-delay: 0.06s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(2) { transition-delay: 0.12s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(3) { transition-delay: 0.18s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(4) { transition-delay: 0.24s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(5) { transition-delay: 0.30s; }
+    .spm-mob-link:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(-4px); }
+    .spm-mob-link.active { background: rgba(0,201,177,0.12); border-color: rgba(0,201,177,0.25); color: #00C9B1; }
+    /* Student list FAB on mobile */
+    .stu-fab {
+      display: none; position: fixed; bottom: 88px; right: 20px; z-index: 490;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--primary); color: white; font-size: 20px;
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 18px rgba(13,27,94,0.5);
+      cursor: pointer; align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stu-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(13,27,94,0.7); }
+
+    /* ══════════════════════════════════════════
+       DARK MODE — Comprehensive Theme
+       ══════════════════════════════════════════ */
+
+    /* ── Base ── */
+    body.dark { background: #0f172a; color: #e2e8f0; }
+
+    /* ── Cards ── */
+    body.dark .card {
+      background: #1e293b !important;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      color: #e2e8f0;
+    }
+
+    /* ── Sidebar ── */
+    body.dark .sidebar { background: #0a1628; }
+    body.dark .spm-nav { background: rgba(6,15,31,0.95) !important; }
+
+    /* ── Alert Banner (override inline style) ── */
+    body.dark #alertBanner {
+      background: #1c1408 !important;
+      border-color: #92400E !important;
+    }
+
+    /* ── Student Cards ── */
+    body.dark .student-card:hover  { background: rgba(255,255,255,0.07); }
+    body.dark .student-card.active { background: rgba(255,255,255,0.12); }
+
+    /* ── Forms ── */
+    body.dark input,
+    body.dark select,
+    body.dark textarea {
+      background: #0f172a !important;
+      color: #e2e8f0 !important;
+      border-color: #334155 !important;
+    }
+
+    /* ── Stat labels (class-based) ── */
+    body.dark .stat-ttl { color: #94a3b8 !important; }
+    body.dark .stat-lbl { color: #64748b  !important; }
+
+    /* ── Progress / Skill bars ── */
+    body.dark .progress-bg,
+    body.dark .skill-bar-bg { background: #334155 !important; }
+
+    /* ── Recommendation & Intervention items ── */
+    body.dark .recommendation-item        { background: #162316 !important; }
+    body.dark .recommendation-item.urgent { background: #2d1515 !important; }
+    body.dark .int-contact  { background: #0d1e30 !important; }
+    body.dark .int-session  { background: #0d1e18 !important; }
+    body.dark .int-referral { background: #1e180a !important; }
+    body.dark .int-note     { background: #1a1f2a !important; }
+
+    /* ── Inline-styled text colors inside #mainContent ──
+       CSS attribute selectors override inline styles      */
+    body.dark #mainContent [style*="color:#111827"],
+    body.dark #mainContent [style*="color: #111827"] { color: #f1f5f9 !important; }
+
+    body.dark #mainContent [style*="color:#374151"],
+    body.dark #mainContent [style*="color: #374151"] { color: #cbd5e1 !important; }
+
+    body.dark #mainContent [style*="color:#6B7280"],
+    body.dark #mainContent [style*="color: #6B7280"] { color: #94a3b8 !important; }
+
+    body.dark #mainContent [style*="color:#9CA3AF"],
+    body.dark #mainContent [style*="color: #9CA3AF"] { color: #64748b  !important; }
+
+    body.dark #mainContent [style*="color:#1E40AF"] { color: #93c5fd !important; }
+    body.dark #mainContent [style*="color:#1E3A8A"] { color: #bfdbfe !important; }
+    body.dark #mainContent [style*="color:#1D4ED8"] { color: #60a5fa !important; }
+
+    /* ── Inline-styled backgrounds inside #mainContent ── */
+    body.dark #mainContent [style*="background:white"],
+    body.dark #mainContent [style*="background: white"]       { background: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important; }
+
+    body.dark #mainContent [style*="background:#F9FAFB"]      { background: #1e293b !important; }
+    body.dark #mainContent [style*="background:#F3F4F6"]      { background: #1e293b !important; }
+    body.dark #mainContent [style*="background:#F0F9FF"]      { background: #0f1e33 !important; }
+
+    /* Blue tint boxes (prediction card, tip box, what-if) */
+    body.dark #mainContent [style*="background:#EFF6FF"],
+    body.dark #mainContent [style*="background: #EFF6FF"],
+    body.dark #mainContent [style*="linear-gradient(135deg,#EFF6FF"] { background: #0f1e33 !important; }
+
+    body.dark #mainContent [style*="background:#DBEAFE"]      { background: #162035 !important; }
+    body.dark #mainContent [style*="linear-gradient(135deg,#EFF6FF,#DBEAFE)"] {
+      background: linear-gradient(135deg,#0f1e33,#162035) !important;
+    }
+
+    /* Green tint */
+    body.dark #mainContent [style*="background:#D1FAE5"]      { background: #0d2318 !important; }
+    body.dark #mainContent [style*="background:#F0FDF4"]      { background: #0d2318 !important; }
+
+    /* Red/warning tints */
+    body.dark #mainContent [style*="background:#FEE2E2"]      { background: #2d1515 !important; }
+    body.dark #mainContent [style*="background:#FFF5F5"]      { background: #2d1515 !important; }
+    body.dark #mainContent [style*="background:#FEF3C7"]      { background: #2d2008 !important; }
+
+    /* ── Inline borders ── */
+    body.dark #mainContent [style*="border-top:1px solid #E5E7EB"]    { border-top-color:    #334155 !important; }
+    body.dark #mainContent [style*="border-bottom:1px solid #E5E7EB"] { border-bottom-color: #334155 !important; }
+    body.dark #mainContent [style*="border:1px solid #E5E7EB"]        { border-color: #334155 !important; }
+    body.dark #mainContent [style*="border:2px solid #E5E7EB"]        { border-color: #334155 !important; background: #1e293b !important; color: #e2e8f0 !important; }
+
+    /* ── Intervention section ── */
+    body.dark #intSection [style*="color:#374151"] { color: #cbd5e1 !important; }
+
+    /* ── Badges remain readable ── */
+    body.dark .badge-high   { background: #3d1515 !important; color: #fca5a5 !important; }
+    body.dark .badge-med    { background: #3d2a08 !important; color: #fcd34d !important; }
+    body.dark .badge-low    { background: #0d2c1a !important; color: #6ee7b7 !important; }
+
+    /* ── Alert pills ── */
+    body.dark .alert-high { background: #3d1515 !important; color: #fca5a5 !important; }
+    body.dark .alert-med  { background: #3d2a08 !important; color: #fcd34d !important; }
+
+    /* ── Print button ── */
+    body.dark #mainContent button[style*="background:white"] {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+
+    /* ── Filter buttons in sidebar ── */
+    body.dark .filter-btn         { color: rgba(255,255,255,0.6) !important; }
+    body.dark .filter-btn.active  { background: var(--accent) !important; color: #0D1B5E !important; }
+
+    /* ── Message type buttons ── */
+    body.dark .msg-type-btn       { background: #1e293b !important; border-color: #334155 !important; color: #94a3b8 !important; }
+    body.dark .msg-type-btn.active { border-color: var(--accent) !important; background: #0f2e2a !important; color: var(--accent) !important; }
+
+    /* ── Tour Overlay ── */
+    #tourOverlay {
+      position: fixed; inset: 0; z-index: 9000; pointer-events: none;
+      background: transparent; transition: background 0.35s;
+    }
+    #tourOverlay.active { background: rgba(0,0,0,0.58); pointer-events: all; }
+
+    /* Tour box — always fixed at bottom-center, always visible */
+    #tourBox {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9200;          /* above overlay */
+      pointer-events: all;    /* always clickable */
+      background: white;
+      border-radius: 18px;
+      padding: 22px 26px 18px;
+      width: 440px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 16px 56px rgba(0,0,0,0.38);
+      display: none;
+    }
+    #tourBox.visible {
+      display: block;
+      animation: tourPop 0.22s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    @keyframes tourPop {
+      from { opacity:0; transform:translateX(-50%) translateY(20px) scale(0.95); }
+      to   { opacity:1; transform:translateX(-50%) translateY(0)     scale(1);    }
+    }
+    body.dark #tourBox { background: #1e293b; }
+
+    /* Tour box internals */
+    .t-header  { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+    .t-step    { font-size:11px; font-weight:700; color:var(--accent); }
+    .t-close   { background:none; border:none; cursor:pointer; font-size:18px; color:#9CA3AF; line-height:1; padding:0 2px; }
+    .t-close:hover { color:#374151; }
+    body.dark .t-close:hover { color:#e2e8f0; }
+    .t-title   { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:8px; }
+    body.dark .t-title { color:#e2e8f0; }
+    .t-text    { font-size:13px; color:#6B7280; line-height:1.7; margin-bottom:16px; }
+    body.dark .t-text  { color:#94a3b8; }
+
+    /* Progress dots */
+    .t-dots { display:flex; gap:5px; }
+    .t-dot  { width:7px; height:7px; border-radius:50%; background:#E5E7EB; transition:background 0.2s,transform 0.2s; }
+    .t-dot.active { background:var(--primary); transform:scale(1.3); }
+    body.dark .t-dot { background:#334155; }
+    body.dark .t-dot.active { background:var(--accent); }
+
+    /* Tour nav buttons */
+    .t-footer  { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+    .t-btn-prev { padding:7px 16px; border-radius:8px; border:2px solid #E5E7EB; background:white; color:#374151; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:border-color 0.18s; }
+    .t-btn-prev:hover { border-color:#9CA3AF; }
+    body.dark .t-btn-prev { background:#0f172a; color:#e2e8f0; border-color:#334155; }
+    .t-btn-next { padding:7px 20px; border-radius:8px; border:none; background:var(--primary); color:white; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity 0.18s; }
+    .t-btn-next:hover { opacity:0.85; }
+
+    /* Highlight ring on targeted elements */
+    .tour-highlight {
+      outline: 3px solid var(--accent) !important;
+      outline-offset: 5px;
+      border-radius: 10px;
+      position: relative;
+      z-index: 9100;
+    }
+    .sidebar { background: var(--primary); min-height: 100vh; }
+    .header { background: var(--primary); }
+    .student-card {
+      cursor: pointer;
+      transition: all 0.2s;
+      border-right: 4px solid transparent;
+    }
+    .student-card:hover { background: rgba(255,255,255,0.12); }
+    .student-card.active {
+      background: rgba(255,255,255,0.18);
+      border-right-color: var(--accent);
+    }
+    .risk-high { color: var(--danger); }
+    .risk-med  { color: var(--warning); }
+    .risk-low  { color: var(--success); }
+    .badge-high { background: #FEE2E2; color: var(--danger); }
+    .badge-med  { background: #FEF3C7; color: #B45309; }
+    .badge-low  { background: #D1FAE5; color: #065F46; }
+    .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+    .skill-bar-bg { background: #E5E7EB; border-radius: 999px; height: 10px; }
+    .skill-bar-fill { height: 10px; border-radius: 999px; transition: width 0.6s ease; }
+    .recommendation-item {
+      border-right: 3px solid var(--accent);
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: #F0FDF4;
+      border-radius: 0 8px 8px 0;
+    }
+    .recommendation-item.urgent {
+      border-right-color: var(--danger);
+      background: #FFF5F5;
+    }
+    .progress-bar-container { margin-bottom: 10px; }
+    .progress-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; color: #374151; }
+    .progress-bg { background: #E5E7EB; border-radius: 999px; height: 10px; }
+    .progress-fill { height: 10px; border-radius: 999px; }
+
+    /* ── Alert Banner ── */
+    .alert-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      white-space: nowrap; transition: opacity 0.2s; flex-shrink: 0;
+    }
+    .alert-pill:hover { opacity: 0.78; }
+    .alert-high { background: #FEE2E2; color: #B91C1C; }
+    .alert-med  { background: #FEF3C7; color: #92400E; }
+
+    /* ── Intervention Log ── */
+    .int-item {
+      padding: 10px 14px; border-radius: 8px;
+      margin-bottom: 8px; font-size: 13px; border-right: 3px solid;
+    }
+    .int-contact  { background: #EFF6FF; border-color: #3B82F6; }
+    .int-session  { background: #F0FDF4; border-color: #10B981; }
+    .int-referral { background: #FFF7ED; border-color: #F59E0B; }
+    .int-note     { background: #F9FAFB; border-color: #9CA3AF; }
+
+    /* ── Stat Mini Cards ── */
+    .stat-mini { text-align: center; }
+    .stat-mini .stat-val { font-size: 26px; font-weight: 800; line-height: 1.1; }
+    .stat-mini .stat-lbl { font-size: 10px; color: #9CA3AF; margin-top: 2px; }
+    .stat-mini .stat-ttl { font-size: 11px; color: #6B7280; margin-bottom: 4px; }
+
+    /* ── Search & Filter ── */
+    #searchInput::placeholder { color: rgba(255,255,255,0.4); }
+    #searchInput:focus { background: rgba(255,255,255,0.2) !important; }
+    .filter-btn {
+      padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25);
+      background: transparent; color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.18s; font-family: inherit; white-space: nowrap;
+    }
+    .filter-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .filter-btn.active { background: var(--accent); color: #0D1B5E; border-color: var(--accent); }
+
+    /* ── What-If Slider ── */
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
+      background: #E5E7EB; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+
+    /* ── Message Generator ── */
+    .msg-type-btn {
+      padding: 6px 14px; border-radius: 8px; border: 2px solid #E5E7EB;
+      background: white; font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: inherit; color: #374151; transition: all 0.18s;
+    }
+    .msg-type-btn.active { border-color: var(--primary); background: #EEF2FF; color: var(--primary); }
+
+    /* ── Print Styles ── */
+    @media print {
+      .sidebar, .spm-nav, #alertBanner, .no-print { display: none !important; }
+      #mainContent { padding: 0 !important; }
+      .card { box-shadow: none !important; border: 1px solid #E5E7EB !important; break-inside: avoid; }
+      body { background: white; }
+    }
+
+    /* ═══════════════════════════════
+       MOBILE RESPONSIVE
+       ═══════════════════════════════ */
+    #sidebarOverlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 150;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    #sidebarOverlay.open { opacity: 1; pointer-events: all; }
+
+    @media (max-width: 768px) {
+      .spm-nav { padding: 0 14px !important; }
+      .spm-pill-track { display: none; }
+      .spm-brand-sub  { display: none; }
+      .spm-hamburger  { display: flex; }
+      .spm-hide-mob   { display: none !important; }
+      .stu-fab        { display: flex; }
+      #sidebarOverlay { display: block; }
+
+      /* ── Sidebar → slide-in drawer ── */
+      .sidebar {
+        position: fixed !important;
+        top: 0; right: -290px; width: 270px !important;
+        height: 100vh !important; min-height: 100vh;
+        z-index: 200; overflow-y: auto;
+        transition: right 0.28s cubic-bezier(.4,0,.2,1);
+        padding-top: 70px !important;
+      }
+      .sidebar.open { right: 0 !important; }
+
+      /* ── Main content ── */
+      #mainContent { padding: 14px 12px !important; }
+
+      /* ── 4-col KPI → 2×2 ── */
+      #mainContent div[style*="grid-template-columns:repeat(4,1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* ── 2-col grids → 1-col ── */
+      #mainContent div[style*="grid-template-columns:1fr 1fr"],
+      #mainContent div[style*="grid-template-columns:1fr 1.6fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* ── 3-col what-if boxes → 1-col ── */
+      #mainContent div[style*="grid-template-columns:1fr 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* ── Student header: wrap on small screens ── */
+      #mainContent .card[style*="display:flex;align-items:center;gap:20px"] {
+        flex-wrap: wrap;
+      }
+
+      /* ── Reduce font sizes slightly ── */
+      #mainContent .kpi-val,
+      #mainContent .stat-val { font-size: 22px !important; }
+
+      /* ── Alert banner ── */
+      #alertBanner { top: 62px; font-size: 11px; }
+
+      /* ── Tour box full width ── */
+      #tourBox { width: calc(100vw - 24px) !important; bottom: 14px; }
+    }
+
+    @media (max-width: 480px) {
+      #mainContent div[style*="grid-template-columns:repeat(4,1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .sidebar { width: 85vw !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== MODERN NAV ===== -->
+<nav class="spm-nav" id="spmNav">
+  <!-- Brand -->
+  <a class="spm-brand" href="landing.html">
+    <span class="spm-logo">SPM</span>
+    <div class="spm-brand-text">
+      <span class="spm-brand-name">خارطة الأداء الذكية</span>
+      <span class="spm-brand-sub">Smart Performance Map • جامعة سطام</span>
+    </div>
+  </a>
+
+  <!-- Pill Nav -->
+  <div class="spm-pill-track">
+    <a href="landing.html"  class="spm-link">🏠 الرئيسية</a>
+    <a href="index.html"    class="spm-link active">🎓 المرشد</a>
+    <a href="student.html"  class="spm-link">👤 الطالب</a>
+    <a href="overview.html" class="spm-link">🏛️ المؤسسة</a>
+  </div>
+
+  <!-- Actions -->
+  <div class="spm-nav-actions">
+    <button onclick="startTour()"  class="spm-act-btn spm-act-tour spm-hide-mob" title="جولة إرشادية">🚀 جولة سريعة</button>
+    <button onclick="toggleDark()" class="spm-act-btn spm-act-dark"  title="الوضع الليلي" id="darkBtn">🌙</button>
+    <button class="spm-hamburger" id="spmHamburger" onclick="toggleMobileMenu()" aria-label="القائمة">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Full-screen Menu -->
+<div class="spm-mobile-overlay" id="spmOverlay">
+  <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
+  <div class="spm-mob-links">
+    <a href="landing.html"  class="spm-mob-link">🏠 الرئيسية</a>
+    <a href="index.html"    class="spm-mob-link active">🎓 لوحة المرشد</a>
+    <a href="student.html"  class="spm-mob-link">👤 بوابة الطالب</a>
+    <a href="overview.html" class="spm-mob-link">🏛️ نظرة المؤسسة</a>
+    <button onclick="toggleMobileMenu();openSidebar();" class="spm-mob-link" style="border:none;cursor:pointer;font-family:inherit;">📋 قائمة الطلاب</button>
+  </div>
+</div>
+
+<!-- Student List FAB (mobile) -->
+<button class="stu-fab" onclick="openSidebar()" title="قائمة الطلاب">📋</button>
+
+<!-- ===== TOUR OVERLAY (click to close) ===== -->
+<div id="tourOverlay" onclick="endTour()"></div>
+
+<!-- ===== TOUR BOX (sibling of overlay, higher z-index) ===== -->
+<div id="tourBox">
+  <!-- Header row: step label + close button -->
+  <div class="t-header">
+    <span class="t-step" id="tourStep"></span>
+    <button class="t-close" onclick="endTour()" title="إغلاق الجولة">✕</button>
+  </div>
+
+  <!-- Content -->
+  <div class="t-title" id="tourTitle"></div>
+  <div class="t-text"  id="tourText"></div>
+
+  <!-- Progress dots -->
+  <div class="t-dots" id="tourDots"></div>
+
+  <!-- Nav -->
+  <div class="t-footer">
+    <button class="t-btn-prev" id="tourPrev" onclick="tourMove(-1)">→ السابق</button>
+    <button class="t-btn-next" id="tourNext" onclick="tourMove(1)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ===== SIDEBAR OVERLAY (mobile) ===== -->
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ===== ALERT BANNER ===== -->
+<div id="alertBanner" style="background:#FFFBEB;border-bottom:2px solid #F59E0B;padding:8px 20px;display:flex;align-items:center;gap:10px;overflow-x:auto;flex-wrap:nowrap;position:sticky;top:62px;z-index:40;">
+  <!-- populated by JS -->
+</div>
+
+<div style="display:flex;min-height:calc(100vh - 62px);">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar text-white flex-shrink-0 p-4" style="width:256px;flex-shrink:0;">
+    <div style="font-size:12px;opacity:0.5;margin-bottom:10px;">قائمة الطلاب</div>
+
+    <!-- Search -->
+    <input type="text" id="searchInput" placeholder="🔍 ابحث عن طالب..."
+      oninput="filterStudents()"
+      style="width:100%;padding:8px 12px;border-radius:8px;border:none;background:rgba(255,255,255,0.12);
+             color:white;font-family:inherit;font-size:12px;margin-bottom:8px;box-sizing:border-box;outline:none;">
+
+    <!-- Risk Filter -->
+    <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
+      <button class="filter-btn active" data-risk="all"    onclick="setFilter('all')">الكل</button>
+      <button class="filter-btn"        data-risk="high"   onclick="setFilter('high')">🔴 خطر</button>
+      <button class="filter-btn"        data-risk="medium" onclick="setFilter('medium')">🟡 متوسط</button>
+      <button class="filter-btn"        data-risk="low"    onclick="setFilter('low')">🟢 جيد</button>
+    </div>
+
+    <div id="studentList"></div>
+
+    <!-- Quick Links -->
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
+      <div style="font-size:11px;opacity:0.5;margin-bottom:8px;">روابط سريعة</div>
+      <a id="studentPortalLink" href="student.html" target="_blank"
+         style="display:block;text-align:center;padding:9px;background:var(--accent);color:#0D1B5E;
+                border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:opacity 0.2s;margin-bottom:8px;"
+         onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+        🎓 بوابة الطالب
+      </a>
+      <a href="overview.html"
+         style="display:block;text-align:center;padding:9px;background:rgba(255,255,255,0.12);color:white;
+                border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:opacity 0.2s;"
+         onmouseover="this.style.opacity=0.75" onmouseout="this.style.opacity=1">
+        🏛️ نظرة المؤسسة
+      </a>
+    </div>
+
+    <!-- Legend -->
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
+      <div style="font-size:11px;opacity:0.5;margin-bottom:8px;">مستوى الخطر</div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:50%;display:inline-block;flex-shrink:0;"></span> مرتفع - يحتاج تدخل عاجل</div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;background:#F59E0B;border-radius:50%;display:inline-block;flex-shrink:0;"></span> متوسط - يحتاج متابعة</div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;background:#10B981;border-radius:50%;display:inline-block;flex-shrink:0;"></span> منخفض - أداء جيد</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div id="mainContent" style="flex:1;padding:24px;min-width:0;">
+    <!-- يُملأ بـ JS -->
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MOCK DATA
+// ============================================================
+const students = [
+  {
+    id: 1,
+    name: "أحمد علي العمري",
+    studentId: "20221045",
+    level: "المستوى الثالث",
+    major: "علوم الحاسب",
+    risk: "high",
+    skills: [
+      { name: "فهم", score: 40 },
+      { name: "تحليل", score: 35 },
+      { name: "تطبيق", score: 20 },
+      { name: "كتابة", score: 15 },
+    ],
+    grades: {
+      assignments: { score: 15, max: 25, label: "التكاليف" },
+      midterms:    { score: 11, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 8,  max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 38, after: null },
+      { label: "أسبوع 3", before: 42, after: null },
+      { label: "أسبوع 5", before: 40, after: null },
+      { label: "بعد التدريب", before: null, after: 58 },
+      { label: "أسبوع 8", before: null, after: 65 },
+    ],
+    devSkills: ["تقوية مهارات التطبيق العملي", "تعزيز مهارات الكتابة الأكاديمية"],
+    recommendations: [
+      { text: "تدخل أكاديمي عاجل — التواصل مع المرشد الأكاديمي فوراً", urgent: true },
+      { text: "الالتحاق ببرنامج تدريبي مكثف في مهارات التطبيق والكتابة", urgent: true },
+      { text: "مراجعة التكاليف والواجبات المتأخرة مع أعضاء هيئة التدريس", urgent: false },
+      { text: "جلسات دعم أكاديمي أسبوعية مع زملاء متفوقين", urgent: false },
+    ],
+  },
+  {
+    id: 2,
+    name: "ريم سالم الزهراني",
+    studentId: "20221189",
+    level: "المستوى الثالث",
+    major: "نظم المعلومات",
+    risk: "high",
+    skills: [
+      { name: "فهم", score: 30 },
+      { name: "تحليل", score: 25 },
+      { name: "تطبيق", score: 45 },
+      { name: "كتابة", score: 38 },
+    ],
+    grades: {
+      assignments:  { score: 13, max: 25, label: "التكاليف" },
+      midterms:     { score: 10, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 6,  max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 30, after: null },
+      { label: "أسبوع 3", before: 32, after: null },
+      { label: "أسبوع 5", before: 28, after: null },
+      { label: "بعد التدريب", before: null, after: 48 },
+      { label: "أسبوع 8", before: null, after: 55 },
+    ],
+    devSkills: ["تعزيز مهارات الفهم والاستيعاب", "رفع مستوى التحليل النقدي"],
+    recommendations: [
+      { text: "تدخل أكاديمي عاجل — خطر التعثر مرتفع جداً", urgent: true },
+      { text: "برنامج تأهيلي في مهارات الفهم والاستيعاب", urgent: true },
+      { text: "زيادة المشاركة الصفية وحضور الساعات المكتبية", urgent: false },
+    ],
+  },
+  {
+    id: 3,
+    name: "خالد محمد الشمري",
+    studentId: "20221302",
+    level: "المستوى الرابع",
+    major: "علوم الحاسب",
+    risk: "medium",
+    skills: [
+      { name: "فهم", score: 65 },
+      { name: "تحليل", score: 60 },
+      { name: "تطبيق", score: 40 },
+      { name: "كتابة", score: 45 },
+    ],
+    grades: {
+      assignments:  { score: 18, max: 25, label: "التكاليف" },
+      midterms:     { score: 12, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 8,  max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 58, after: null },
+      { label: "أسبوع 3", before: 62, after: null },
+      { label: "أسبوع 5", before: 60, after: null },
+      { label: "بعد التدريب", before: null, after: 72 },
+      { label: "أسبوع 8", before: null, after: 78 },
+    ],
+    devSkills: ["تعزيز مهارات التطبيق العملي", "رفع مستوى الكتابة التقنية"],
+    recommendations: [
+      { text: "الانضمام لمشاريع تطبيقية لتعزيز المهارات العملية", urgent: false },
+      { text: "دورة في الكتابة التقنية والتوثيق", urgent: false },
+      { text: "التواصل مع الخريجين للإرشاد المهني", urgent: false },
+    ],
+  },
+  {
+    id: 4,
+    name: "سارة أحمد الحربي",
+    studentId: "20221456",
+    level: "المستوى الرابع",
+    major: "نظم المعلومات",
+    risk: "medium",
+    skills: [
+      { name: "فهم", score: 70 },
+      { name: "تحليل", score: 55 },
+      { name: "تطبيق", score: 68 },
+      { name: "كتابة", score: 62 },
+    ],
+    grades: {
+      assignments:  { score: 20, max: 25, label: "التكاليف" },
+      midterms:     { score: 13, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 9,  max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 62, after: null },
+      { label: "أسبوع 3", before: 66, after: null },
+      { label: "أسبوع 5", before: 64, after: null },
+      { label: "بعد التدريب", before: null, after: 74 },
+      { label: "أسبوع 8", before: null, after: 80 },
+    ],
+    devSkills: ["تطوير مهارات التحليل النقدي"],
+    recommendations: [
+      { text: "ورشة عمل في مهارات التحليل وحل المشكلات", urgent: false },
+      { text: "المشاركة في مسابقات أكاديمية لتحفيز الأداء", urgent: false },
+    ],
+  },
+  {
+    id: 5,
+    name: "محمد ناصر القحطاني",
+    studentId: "20221578",
+    level: "المستوى الخامس",
+    major: "علوم الحاسب",
+    risk: "low",
+    skills: [
+      { name: "فهم", score: 85 },
+      { name: "تحليل", score: 80 },
+      { name: "تطبيق", score: 78 },
+      { name: "كتابة", score: 82 },
+    ],
+    grades: {
+      assignments:  { score: 23, max: 25, label: "التكاليف" },
+      midterms:     { score: 14, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 10, max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 75, after: null },
+      { label: "أسبوع 3", before: 78, after: null },
+      { label: "أسبوع 5", before: 80, after: null },
+      { label: "بعد التدريب", before: null, after: 86 },
+      { label: "أسبوع 8", before: null, after: 90 },
+    ],
+    devSkills: ["الإبداع والابتكار", "القيادة الأكاديمية"],
+    recommendations: [
+      { text: "الترشيح لبرنامج الطلاب المتفوقين ودعم الأقران", urgent: false },
+      { text: "المشاركة في الأبحاث الأكاديمية مع هيئة التدريس", urgent: false },
+      { text: "الاستعداد لمسابقات التميز الجامعي", urgent: false },
+    ],
+  },
+  {
+    id: 6,
+    name: "نورة يوسف العتيبي",
+    studentId: "20221699",
+    level: "المستوى الخامس",
+    major: "نظم المعلومات",
+    risk: "low",
+    skills: [
+      { name: "فهم", score: 92 },
+      { name: "تحليل", score: 88 },
+      { name: "تطبيق", score: 85 },
+      { name: "كتابة", score: 90 },
+    ],
+    grades: {
+      assignments:  { score: 25, max: 25, label: "التكاليف" },
+      midterms:     { score: 15, max: 15, label: "الاختبارات الفصلية" },
+      participation:{ score: 10, max: 10, label: "المشاركة" },
+    },
+    progress: [
+      { label: "أسبوع 1", before: 82, after: null },
+      { label: "أسبوع 3", before: 85, after: null },
+      { label: "أسبوع 5", before: 87, after: null },
+      { label: "بعد التدريب", before: null, after: 92 },
+      { label: "أسبوع 8", before: null, after: 95 },
+    ],
+    devSkills: ["التميز والريادة الأكاديمية"],
+    recommendations: [
+      { text: "مرشحة لبرنامج المساعد الأكاديمي وإرشاد الطلاب", urgent: false },
+      { text: "المشاركة في الهاكاثونات والمسابقات التقنية", urgent: false },
+      { text: "التوجه نحو البحث العلمي والنشر الأكاديمي", urgent: false },
+    ],
+  },
+];
+
+// ============================================================
+// HELPERS
+// ============================================================
+function riskLabel(r) {
+  if (r === 'high')   return 'مرتفع';
+  if (r === 'medium') return 'متوسط';
+  return 'منخفض';
+}
+function riskColor(r) {
+  if (r === 'high')   return '#EF4444';
+  if (r === 'medium') return '#F59E0B';
+  return '#10B981';
+}
+function riskBadgeClass(r) {
+  if (r === 'high')   return 'badge-high';
+  if (r === 'medium') return 'badge-med';
+  return 'badge-low';
+}
+function skillColor(score) {
+  if (score >= 70) return '#10B981';
+  if (score >= 40) return '#F59E0B';
+  return '#EF4444';
+}
+function skillLabel(score) {
+  if (score >= 70) return 'متقدم';
+  if (score >= 40) return 'متوسط';
+  return 'ضعيف';
+}
+
+// حساب نسبة اكتمال الدرجات
+function totalPct(g) {
+  const total = g.assignments.score + g.midterms.score + g.participation.score;
+  const max   = g.assignments.max   + g.midterms.max   + g.participation.max;
+  return Math.round(total / max * 100);
+}
+
+// توزيع مؤشر التعثر للفصل الكامل
+const riskDist = {
+  high:   students.filter(s => s.risk === 'high').length,
+  medium: students.filter(s => s.risk === 'medium').length,
+  low:    students.filter(s => s.risk === 'low').length,
+};
+
+// متوسط الفصل الدراسي
+const classAvgPct = Math.round(
+  students.reduce((sum, s) => sum + totalPct(s.grades), 0) / students.length
+);
+
+// ============================================================
+// 🔮 GRADE PREDICTOR
+// ============================================================
+function predictGrade(s) {
+  const current = totalPct(s.grades);
+  const avgSkill = s.skills.reduce((a, b) => a + b.score, 0) / s.skills.length;
+  // بناءً على مستوى المهارات، نتوقع الأثر على الاختبار النهائي
+  const delta = avgSkill >= 70 ? 5 : avgSkill >= 50 ? 2 : -4;
+  const predicted = Math.min(100, Math.max(0, Math.round(current + delta)));
+  const margin = avgSkill >= 70 ? 3 : 5;
+  return { score: predicted, margin };
+}
+
+// ============================================================
+// 🚨 ALERT BANNER
+// ============================================================
+function renderAlerts() {
+  const banner = document.getElementById('alertBanner');
+  const alerts = [];
+  students.forEach(s => {
+    const pct = totalPct(s.grades);
+    if (s.risk === 'high') {
+      alerts.push({ s, msg: `${s.name} — خطر مرتفع (${pct}%)`, lvl: 'high' });
+    } else if (s.risk === 'medium') {
+      alerts.push({ s, msg: `${s.name} — يحتاج متابعة (${pct}%)`, lvl: 'med' });
+    }
+  });
+
+  if (alerts.length === 0) { banner.style.display = 'none'; return; }
+
+  banner.innerHTML = `
+    <span style="font-size:12px;font-weight:700;color:#92400E;white-space:nowrap;flex-shrink:0;">
+      🚨 ${alerts.length} تنبيه نشط:
+    </span>
+    ${alerts.map(a => `
+      <div class="alert-pill alert-${a.lvl}" onclick="selectStudent(${a.s.id})">
+        ${a.lvl === 'high' ? '🔴' : '🟡'} ${a.msg}
+      </div>
+    `).join('')}
+    <div style="flex:1;min-width:16px;"></div>
+    <button class="no-print" onclick="document.getElementById('alertBanner').style.display='none'"
+      style="background:none;border:none;cursor:pointer;color:#92400E;font-size:18px;flex-shrink:0;line-height:1;">×</button>
+  `;
+}
+
+// ============================================================
+// 📝 INTERVENTION LOG
+// ============================================================
+function getInterventions(sid) {
+  try { return JSON.parse(localStorage.getItem('spm_int_' + sid) || '[]'); }
+  catch { return []; }
+}
+
+function renderIntList(sid) {
+  const list = getInterventions(sid);
+  if (list.length === 0) {
+    return `<div style="text-align:center;padding:24px 0;color:#9CA3AF;font-size:13px;">لا توجد تدخلات مسجلة بعد</div>`;
+  }
+  const icons = { contact:'📞', session:'🎓', referral:'🏥', note:'📋' };
+  const labels = { contact:'تواصل مع الطالب', session:'جلسة إرشادية', referral:'إحالة لدعم أكاديمي', note:'ملاحظة' };
+  return list.map(i => `
+    <div class="int-item int-${i.type}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-weight:700;font-size:12px;">${icons[i.type] || '📋'} ${labels[i.type] || i.type}</span>
+        <span style="font-size:11px;color:#9CA3AF;">${i.date}</span>
+      </div>
+      <div style="color:#374151;">${i.text}</div>
+    </div>
+  `).join('');
+}
+
+function saveIntervention(sid) {
+  const text = document.getElementById('intText').value.trim();
+  const type = document.getElementById('intType').value;
+  if (!text) return;
+  const list = getInterventions(sid);
+  list.unshift({
+    date: new Date().toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }),
+    text, type
+  });
+  localStorage.setItem('spm_int_' + sid, JSON.stringify(list));
+  document.getElementById('intText').value = '';
+  document.getElementById('intList').innerHTML = renderIntList(sid);
+}
+
+// ============================================================
+// 📤 PRINT REPORT
+// ============================================================
+function printReport() { window.print(); }
+
+// ============================================================
+// 🔍 SEARCH & FILTER SIDEBAR
+// ============================================================
+let activeFilter = 'all';
+
+function setFilter(risk) {
+  activeFilter = risk;
+  document.querySelectorAll('.filter-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.risk === risk)
+  );
+  filterStudents();
+}
+
+function filterStudents() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+  students.forEach(s => {
+    const card = document.getElementById('card-' + s.id);
+    if (!card) return;
+    const matchRisk   = activeFilter === 'all' || s.risk === activeFilter;
+    const matchSearch = !q || s.name.includes(q) || s.major.toLowerCase().includes(q) || s.studentId.includes(q);
+    card.style.display = (matchRisk && matchSearch) ? '' : 'none';
+  });
+}
+
+// ============================================================
+// 🎮 WHAT-IF SIMULATOR
+// ============================================================
+function updateWhatIf(workPct) {
+  const examVal = parseInt(document.getElementById('examSlider').value);
+  document.getElementById('examSliderVal').textContent    = examVal + '%';
+  document.getElementById('examPctDisplay').textContent   = examVal + '%';
+
+  const final = Math.round(workPct * 0.5 + examVal * 0.5);
+  const label = final >= 90 ? 'ممتاز A' : final >= 80 ? 'جيد جداً B' :
+                final >= 70 ? 'جيد C'   : final >= 60 ? 'مقبول D'    : 'راسب F';
+  const bg    = final >= 70 ? '#D1FAE5' : final >= 60 ? '#FEF3C7' : '#FEE2E2';
+  const col   = final >= 70 ? '#065F46' : final >= 60 ? '#92400E' : '#991B1B';
+
+  const box = document.getElementById('whatIfResult');
+  box.style.background = bg;
+  box.querySelector(':first-child').style.color = col;
+  document.getElementById('whatIfFinal').textContent   = final + '%';
+  document.getElementById('whatIfFinal').style.color   = col;
+  document.getElementById('whatIfGrade').textContent   = label;
+  document.getElementById('whatIfGrade').style.color   = col;
+}
+
+// ============================================================
+// 📧 SMART MESSAGE GENERATOR
+// ============================================================
+function generateMessage(s, type) {
+  const pct       = totalPct(s.grades);
+  const weak      = s.skills.filter(sk => sk.score < 60).map(sk => sk.name);
+  const recs      = s.recommendations.slice(0, 2).map(r => `  • ${r.text}`).join('\n');
+  const today     = new Date().toLocaleDateString('ar-SA', {year:'numeric',month:'long',day:'numeric'});
+
+  if (type === 'student') {
+    return `السلام عليكم ورحمة الله وبركاته،
+الطالب/ة العزيز/ة ${s.name}،
+
+بناءً على متابعة أدائك الأكاديمي في تخصص ${s.major} (${s.level})، وفي إطار برنامج خارطة الأداء الذكية، نودّ إحاطتك بالآتي:
+
+📊 الوضع الأكاديمي الحالي (${today}):
+  • نسبة الأعمال الفصلية: ${pct}%
+  • مؤشر الخطر الأكاديمي: ${riskLabel(s.risk)}
+${weak.length ? `  • مهارات تحتاج تعزيزاً: ${weak.join('، ')}` : '  • مستواك في المهارات الأكاديمية مرضٍ'}
+
+✅ التوصيات المقترحة:
+${recs}
+
+نأمل منك التواصل مع مرشدك الأكاديمي لمناقشة خطة التطوير في أقرب وقت.
+مع تمنياتنا بالتوفيق والنجاح،
+فريق الإرشاد الأكاديمي — جامعة الأمير سطام`;
+  }
+
+  if (type === 'parent') {
+    return `السلام عليكم ورحمة الله وبركاته،
+ولي أمر الطالب/ة ${s.name} المحترم/ة،
+
+يسعدنا إطلاعكم على المستجدات الأكاديمية لنجلكم/كريمتكم (${today}):
+
+📋 الملخص الأكاديمي:
+  • التخصص: ${s.major} — ${s.level}
+  • الرقم الجامعي: ${s.studentId}
+  • نسبة الأعمال الفصلية: ${pct}%
+  • مؤشر الأداء: ${riskLabel(s.risk)}
+
+${s.risk === 'high'
+  ? '⚠️ يستوجب الوضع تدخلاً أكاديمياً عاجلاً. نرجو التواصل مع الإرشاد الأكاديمي في أقرب وقت للاطلاع على تفاصيل خطة الدعم.'
+  : s.risk === 'medium'
+  ? '📌 نوصي بمتابعة الأداء الأكاديمي وتشجيع الحضور المنتظم والمشاركة الفعّالة.'
+  : '✨ يُظهر نجلكم/كريمتكم أداءً أكاديمياً مشرفاً. نشكر اهتمامكم ومتابعتكم المستمرة.'}
+
+للتواصل مع المرشد الأكاديمي عبر البوابة الإلكترونية للجامعة.
+مع خالص التقدير،
+عمادة شؤون الطلاب — جامعة الأمير سطام`;
+  }
+
+  // referral
+  return `نموذج إحالة للدعم الأكاديمي
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+الاسم الكامل : ${s.name}
+الرقم الجامعي: ${s.studentId}
+التخصص      : ${s.major}
+المستوى      : ${s.level}
+تاريخ الإحالة: ${today}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+سبب الإحالة:
+  • نسبة الأعمال الفصلية: ${pct}% (مستوى الخطر: ${riskLabel(s.risk)})
+${weak.length ? `  • ضعف في: ${weak.join('، ')}` : ''}
+
+البرامج المقترحة:
+${recs}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+المرشد الأكاديمي: _________________
+التوقيع:          _________________`;
+}
+
+function switchMsgType(type, sid) {
+  const s = students.find(x => x.id === sid);
+  document.querySelectorAll('.msg-type-btn').forEach((b, i) => {
+    const types = ['student','parent','referral'];
+    b.classList.toggle('active', types[i] === type);
+  });
+  document.getElementById('msgOutput').value = generateMessage(s, type);
+}
+
+function copyMessage() {
+  const ta = document.getElementById('msgOutput');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = ta.nextElementSibling;
+    const orig = btn.textContent;
+    btn.textContent = '✅ تم النسخ!';
+    btn.style.background = '#10B981';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--primary)'; }, 2000);
+  });
+}
+
+// ============================================================
+// RENDER SIDEBAR
+// ============================================================
+function renderSidebar() {
+  const list = document.getElementById('studentList');
+  list.innerHTML = students.map(s => `
+    <div class="student-card" id="card-${s.id}" onclick="selectStudent(${s.id})"
+         style="border-radius:8px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+      <span style="width:10px;height:10px;background:${riskColor(s.risk)};border-radius:50%;flex-shrink:0;"></span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.name}</div>
+        <div style="font-size:11px;opacity:0.6;">${s.major}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// RENDER MAIN
+// ============================================================
+let activeCharts = {};
+
+function destroyCharts() {
+  Object.values(activeCharts).forEach(c => { if(c) c.destroy(); });
+  activeCharts = {};
+}
+
+function selectStudent(id) {
+  // Close sidebar drawer on mobile after selection
+  if (window.innerWidth <= 768) closeSidebar();
+  // Highlight sidebar
+  document.querySelectorAll('.student-card').forEach(el => el.classList.remove('active'));
+  document.getElementById('card-' + id).classList.add('active');
+
+  // Update student portal link with current student
+  const portalLink = document.getElementById('studentPortalLink');
+  if (portalLink) portalLink.href = 'student.html?id=' + id;
+
+  const s = students.find(x => x.id === id);
+  destroyCharts();
+  renderMain(s);
+}
+
+function renderMain(s) {
+  const pct  = totalPct(s.grades);
+  const pred = predictGrade(s);
+  const sortedByPct = [...students].sort((a,b) => totalPct(b.grades) - totalPct(a.grades));
+  const rankPos = sortedByPct.findIndex(x => x.id === s.id) + 1;
+  const gap = pct - classAvgPct;
+  const main = document.getElementById('mainContent');
+
+  main.innerHTML = `
+    <!-- Student Header -->
+    <div class="card" style="padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:20px;">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:bold;flex-shrink:0;">
+        ${s.name[0]}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:20px;font-weight:700;color:#111827;">${s.name}</div>
+        <div style="font-size:13px;color:#6B7280;margin-top:2px;">${s.studentId} • ${s.major} • ${s.level}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <div style="display:inline-block;padding:6px 16px;border-radius:999px;font-size:13px;font-weight:700;" class="${riskBadgeClass(s.risk)}">
+          مؤشر الخطر: ${riskLabel(s.risk)}
+        </div>
+        <button class="no-print" onclick="printReport()"
+          style="padding:8px 16px;background:white;border:2px solid #E5E7EB;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;display:flex;align-items:center;gap:6px;transition:border-color 0.2s;"
+          onmouseover="this.style.borderColor='#0D1B5E'" onmouseout="this.style.borderColor='#E5E7EB'">
+          📤 طباعة التقرير
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row: 4 Smart KPI Cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+
+      <!-- الأعمال الحالية -->
+      <div class="card stat-mini" style="padding:16px;">
+        <div class="stat-ttl">الأعمال الحالية</div>
+        <div class="stat-val" style="color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</div>
+        <div class="stat-lbl">من 50 درجة</div>
+      </div>
+
+      <!-- توقع الدرجة النهائية -->
+      <div class="card stat-mini" style="padding:16px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);">
+        <div class="stat-ttl" style="color:#1D4ED8;">🔮 التوقع النهائي</div>
+        <div class="stat-val" style="color:#1E40AF;">${pred.score}%</div>
+        <div class="stat-lbl" style="color:#3B82F6;">± ${pred.margin}% دقة التوقع</div>
+      </div>
+
+      <!-- مقارنة متوسط الفصل -->
+      <div class="card stat-mini" style="padding:16px;">
+        <div class="stat-ttl">📊 متوسط الفصل</div>
+        <div class="stat-val" style="color:#111827;">${classAvgPct}%</div>
+        <div class="stat-lbl" style="color:${gap>=0?'#10B981':'#EF4444'};font-size:11px;font-weight:700;">
+          ${gap>=0?'▲ أعلى بـ':'▼ أدنى بـ'} ${Math.abs(gap)}%
+        </div>
+      </div>
+
+      <!-- الترتيب في الفصل -->
+      <div class="card stat-mini" style="padding:16px;">
+        <div class="stat-ttl">🏅 الترتيب</div>
+        <div class="stat-val" style="color:#111827;">${rankPos}<span style="font-size:16px;color:#9CA3AF;">/${students.length}</span></div>
+        <div class="stat-lbl">في الفصل الدراسي</div>
+      </div>
+    </div>
+
+    <!-- Row 1: Risk Pie + Grades -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+
+      <!-- Radar: Academic Fingerprint -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🕸️ البصمة الأكاديمية</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">ملف الطالب على 6 محاور أكاديمية</div>
+        <canvas id="radarChart" height="210"></canvas>
+      </div>
+
+      <!-- Grades Breakdown -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">درجات الأعمال</div>
+        ${Object.values(s.grades).map(g => {
+          const gPct = Math.round(g.score / g.max * 100);
+          const col = gPct >= 70 ? '#10B981' : gPct >= 50 ? '#F59E0B' : '#EF4444';
+          return `
+            <div class="progress-bar-container">
+              <div class="progress-label">
+                <span>${g.label}</span>
+                <span style="font-weight:700;">${g.score}/${g.max} <span style="color:${col};font-size:11px;">(${gPct}%)</span></span>
+              </div>
+              <div class="progress-bg">
+                <div class="progress-fill" style="width:${gPct}%;background:${col};"></div>
+              </div>
+            </div>`;
+        }).join('')}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:#6B7280;">الإجمالي</span>
+          <span style="font-size:20px;font-weight:800;color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Skills Bar + Progress Line -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+
+      <!-- Skills Bar Chart -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">المهارات الأساسية</div>
+        <canvas id="skillsChart" height="160"></canvas>
+      </div>
+
+      <!-- Progress Line Chart -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">تقدم الطالب قبل وبعد التدريب</div>
+        <canvas id="progressChart" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 3: Dev Skills + Recommendations -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <!-- Dev Skills -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">المهارات التطويرية المستهدفة</div>
+        ${s.skills.map(sk => `
+          <div style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+              <span style="font-size:13px;font-weight:600;">${sk.name}</span>
+              <span style="font-size:12px;font-weight:700;color:${skillColor(sk.score)};">${sk.score}% — ${skillLabel(sk.score)}</span>
+            </div>
+            <div class="skill-bar-bg">
+              <div class="skill-bar-fill" style="width:${sk.score}%;background:${skillColor(sk.score)};"></div>
+            </div>
+          </div>
+        `).join('')}
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #E5E7EB;">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;">بحاجة للتطوير:</div>
+          ${s.devSkills.map(d => `
+            <div style="font-size:12px;color:#6B7280;padding:4px 0;display:flex;align-items:center;gap-6px;">
+              <span style="color:#F59E0B;">⚡</span> ${d}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">التوصيات الذكية</div>
+        ${s.recommendations.map(r => `
+          <div class="recommendation-item ${r.urgent ? 'urgent' : ''}">
+            <div style="font-size:13px;color:#374151;">
+              ${r.urgent ? '🔴' : '✅'} ${r.text}
+            </div>
+          </div>
+        `).join('')}
+        <div style="margin-top:12px;padding:10px;background:#EFF6FF;border-radius:8px;font-size:12px;color:#1E40AF;">
+          💡 هذه التوصيات مبنية على تحليل أعمال السنة (50%) وبيانات المهارات الأكاديمية.
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: What-If Simulator + Message Generator -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+
+      <!-- 🎮 What-If Simulator -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🎮 محاكي "ماذا لو؟"</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:16px;">حرّك الشريط لترى أثر الاختبار النهائي على الدرجة الكلية</div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:13px;font-weight:600;color:#374151;">نسبة الاختبار النهائي</span>
+          <span id="examSliderVal" style="font-size:16px;font-weight:800;color:var(--primary);">60%</span>
+        </div>
+        <input type="range" id="examSlider" min="0" max="100" value="60"
+          oninput="updateWhatIf(${pct})" style="margin-bottom:16px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+          <div style="padding:12px;background:#F9FAFB;border-radius:10px;">
+            <div style="font-size:10px;color:#6B7280;margin-bottom:4px;">الأعمال الفصلية</div>
+            <div style="font-size:22px;font-weight:800;color:#111827;">${pct}%</div>
+            <div style="font-size:10px;color:#9CA3AF;">وزن 50%</div>
+          </div>
+          <div style="padding:12px;background:#EFF6FF;border-radius:10px;">
+            <div style="font-size:10px;color:#1D4ED8;margin-bottom:4px;">الاختبار النهائي</div>
+            <div id="examPctDisplay" style="font-size:22px;font-weight:800;color:#1E40AF;">60%</div>
+            <div style="font-size:10px;color:#93C5FD;">وزن 50%</div>
+          </div>
+          <div id="whatIfResult" style="padding:12px;border-radius:10px;">
+            <div style="font-size:10px;margin-bottom:4px;">الدرجة الكلية</div>
+            <div id="whatIfFinal" style="font-size:22px;font-weight:800;"></div>
+            <div id="whatIfGrade" style="font-size:10px;font-weight:700;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 📧 Smart Message Generator -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">📧 مولّد الرسائل الذكية</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">رسالة رسمية جاهزة بناءً على بيانات الطالب</div>
+
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="msg-type-btn active" onclick="switchMsgType('student',${s.id})">للطالب</button>
+          <button class="msg-type-btn"        onclick="switchMsgType('parent',${s.id})">لولي الأمر</button>
+          <button class="msg-type-btn"        onclick="switchMsgType('referral',${s.id})">إحالة أكاديمية</button>
+        </div>
+
+        <textarea id="msgOutput" rows="7" readonly
+          style="width:100%;padding:10px;border:1px solid #E5E7EB;border-radius:8px;font-family:inherit;
+                 font-size:12px;color:#374151;resize:none;box-sizing:border-box;line-height:1.7;background:#FAFAFA;">
+${generateMessage(s,'student')}</textarea>
+
+        <button onclick="copyMessage()"
+          style="margin-top:8px;width:100%;padding:9px;background:var(--primary);color:white;border:none;
+                 border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+          📋 نسخ الرسالة
+        </button>
+      </div>
+    </div>
+
+    <!-- Row 5: Intervention Log -->
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:20px;margin-top:20px;" class="no-print" id="intSection">
+
+      <!-- Add Intervention Form -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">📝 تسجيل تدخل جديد</div>
+        <select id="intType"
+          style="width:100%;padding:9px 12px;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:10px;font-family:inherit;font-size:13px;color:#374151;background:white;outline:none;">
+          <option value="contact">📞 تواصل مع الطالب</option>
+          <option value="session">🎓 جلسة إرشادية</option>
+          <option value="referral">🏥 إحالة لدعم أكاديمي</option>
+          <option value="note">📋 ملاحظة عامة</option>
+        </select>
+        <textarea id="intText" rows="4" placeholder="اكتب تفاصيل التدخل الأكاديمي هنا..."
+          style="width:100%;padding:9px 12px;border:1px solid #E5E7EB;border-radius:8px;font-family:inherit;font-size:13px;resize:none;margin-bottom:10px;box-sizing:border-box;color:#374151;outline:none;"></textarea>
+        <button onclick="saveIntervention(${s.id})"
+          style="width:100%;padding:10px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+          ✅ حفظ التدخل
+        </button>
+      </div>
+
+      <!-- Intervention History -->
+      <div class="card" style="padding:20px;max-height:320px;overflow-y:auto;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">
+          📋 سجل التدخلات
+          <span style="font-size:11px;font-weight:400;color:#9CA3AF;margin-right:8px;">(يُحفظ محلياً)</span>
+        </div>
+        <div id="intList">${renderIntList(s.id)}</div>
+      </div>
+    </div>
+  `;
+
+  // ---- CHARTS ----
+
+  // 1. 🕸️ Radar — Academic Fingerprint
+  const partPct = Math.round(s.grades.participation.score / s.grades.participation.max * 100);
+  activeCharts.radar = new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: ['الفهم', 'التحليل', 'التطبيق', 'الكتابة', 'الحضور', 'الأداء العام'],
+      datasets: [
+        {
+          label: s.name,
+          data: [
+            s.skills.find(x=>x.name==='فهم')?.score    ?? s.skills[0].score,
+            s.skills.find(x=>x.name==='تحليل')?.score  ?? s.skills[1].score,
+            s.skills.find(x=>x.name==='تطبيق')?.score  ?? s.skills[2].score,
+            s.skills.find(x=>x.name==='كتابة')?.score  ?? s.skills[3].score,
+            partPct,
+            pct,
+          ],
+          backgroundColor: 'rgba(13,27,94,0.12)',
+          borderColor: 'rgba(13,27,94,0.8)',
+          pointBackgroundColor: 'rgba(13,27,94,0.9)',
+          pointRadius: 4,
+          borderWidth: 2,
+        },
+        {
+          label: 'متوسط الفصل',
+          data: [classAvgPct, classAvgPct, classAvgPct, classAvgPct, classAvgPct, classAvgPct],
+          backgroundColor: 'rgba(0,201,177,0.06)',
+          borderColor: 'rgba(0,201,177,0.7)',
+          borderDash: [4,4],
+          pointRadius: 0,
+          borderWidth: 1.5,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { stepSize: 25, font: { size: 9 }, color: '#9CA3AF' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          pointLabels: { font: { size: 12, weight: '600' }, color: '#374151' },
+          angleLines: { color: 'rgba(0,0,0,0.08)' },
+        }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12, padding: 10 } }
+      }
+    }
+  });
+
+  // Init What-If with current workPct
+  setTimeout(() => updateWhatIf(pct), 50);
+
+  // 2. Skills Horizontal Bar
+  activeCharts.skills = new Chart(document.getElementById('skillsChart'), {
+    type: 'bar',
+    data: {
+      labels: s.skills.map(sk => sk.name),
+      datasets: [{
+        label: 'مستوى المهارة',
+        data: s.skills.map(sk => sk.score),
+        backgroundColor: s.skills.map(sk => skillColor(sk.score)),
+        borderRadius: 6,
+        barThickness: 22,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          min: 0, max: 100,
+          ticks: { callback: v => v + '%', font: { size: 11 } },
+          grid: { color: '#F3F4F6' }
+        },
+        y: { ticks: { font: { size: 12 } } }
+      }
+    }
+  });
+
+  // 3. Progress Line Chart
+  const progressLabels = s.progress.map(p => p.label);
+  const beforeData = s.progress.map(p => p.before);
+  const afterData  = s.progress.map(p => p.after);
+
+  activeCharts.progress = new Chart(document.getElementById('progressChart'), {
+    type: 'line',
+    data: {
+      labels: progressLabels,
+      datasets: [
+        {
+          label: 'قبل التدريب',
+          data: beforeData,
+          borderColor: '#F59E0B',
+          backgroundColor: 'rgba(245,158,11,0.1)',
+          pointBackgroundColor: '#F59E0B',
+          pointRadius: 5,
+          tension: 0.3,
+          spanGaps: false,
+        },
+        {
+          label: 'بعد التدريب',
+          data: afterData,
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16,185,129,0.1)',
+          pointBackgroundColor: '#10B981',
+          pointRadius: 5,
+          tension: 0.3,
+          spanGaps: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 11 }, boxWidth: 12 }
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          ticks: { callback: v => v + '%', font: { size: 11 } },
+          grid: { color: '#F3F4F6' }
+        },
+        x: { ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+// ============================================================
+// 🌙 DARK MODE
+// ============================================================
+function applyChartTheme() {
+  const dark = document.body.classList.contains('dark');
+  Chart.defaults.color       = dark ? '#94a3b8' : '#6B7280';
+  Chart.defaults.borderColor = dark ? '#334155' : '#E5E7EB';
+}
+
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  const on = document.body.classList.contains('dark');
+  document.getElementById('darkBtn').textContent = on ? '☀️' : '🌙';
+  localStorage.setItem('spm_dark', on ? '1' : '');
+  // Re-apply Chart.js theme and re-render current student's charts
+  applyChartTheme();
+  const activeCard = document.querySelector('.student-card.active');
+  if (activeCard) {
+    const id = parseInt(activeCard.id.replace('card-', ''));
+    if (id) selectStudent(id);
+  }
+}
+
+// ============================================================
+// 🚀 GUIDED TOUR
+// ============================================================
+const tourSteps = [
+  {
+    target: '#alertBanner',
+    title:  'شريط التنبيهات الذكية 🚨',
+    text:   'يظهر تلقائياً عند فتح اللوحة ويعرض الطلاب في خطر مرتفع أو متوسط. اضغط على أي تنبيه للانتقال مباشرة لملف الطالب.',
+  },
+  {
+    target: '#studentList',
+    title:  'قائمة الطلاب مع البحث والفلترة 🔍',
+    text:   'ابحث بالاسم أو الرقم الجامعي، وفلتر حسب مستوى الخطر بضغطة واحدة. النقطة الملونة تعكس مؤشر الخطر لكل طالب.',
+  },
+  {
+    target: '#mainContent',
+    title:  'بطاقات الأداء الذكية 📊',
+    text:   '٤ مؤشرات تُحلل الطالب فوراً: الأعمال الحالية، التوقع النهائي بخوارزمية ذكية، مقارنة بمتوسط الفصل، والترتيب.',
+  },
+  {
+    target: '#mainContent',
+    title:  'البصمة الأكاديمية 🕸️',
+    text:   'مخطط عنكبوتي يعرض الطالب على ٦ محاور دفعة واحدة مع خط متقطع يمثّل متوسط الفصل للمقارنة الفورية.',
+  },
+  {
+    target: '#mainContent',
+    title:  'محاكي "ماذا لو؟" 🎮',
+    text:   'حرّك الشريط لترى: إذا حصل الطالب على X% في الاختبار النهائي، كانت درجته الكلية Y%. تفاعلي ومباشر.',
+  },
+  {
+    target: '#mainContent',
+    title:  'مولّد الرسائل الذكية 📧',
+    text:   'رسالة رسمية جاهزة للطالب أو ولي أمره أو إحالة أكاديمية — تُبنى تلقائياً من بياناته. اضغط "نسخ" وأرسلها.',
+  },
+  {
+    target: '#intSection',
+    title:  'سجل التدخلات الأكاديمية 📝',
+    text:   'سجّل كل تدخل (تواصل / جلسة / إحالة) مع التاريخ والتفاصيل. يُحفظ في المتصفح ويبقى بعد إغلاق الصفحة.',
+  },
+];
+
+let tourIdx = 0;
+let tourHighlighted = null;
+
+function startTour() {
+  tourIdx = 0;
+  selectStudent(1);
+  // Build progress dots once
+  const dotsEl = document.getElementById('tourDots');
+  dotsEl.innerHTML = tourSteps.map((_,i) =>
+    `<div class="t-dot" id="tdot-${i}"></div>`
+  ).join('');
+  setTimeout(() => showTourStep(), 320);
+}
+
+function showTourStep() {
+  if (tourIdx < 0 || tourIdx >= tourSteps.length) { endTour(); return; }
+  const step    = tourSteps[tourIdx];
+  const overlay = document.getElementById('tourOverlay');
+  const box     = document.getElementById('tourBox');
+
+  // ── Remove old highlight ──
+  if (tourHighlighted) tourHighlighted.classList.remove('tour-highlight');
+  const target = document.querySelector(step.target);
+  if (target) {
+    target.classList.add('tour-highlight');
+    tourHighlighted = target;
+    // Scroll target into view so the highlight ring is visible
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ── Update content ──
+  document.getElementById('tourStep').textContent  = `الخطوة ${tourIdx + 1} من ${tourSteps.length}`;
+  document.getElementById('tourTitle').textContent = step.title;
+  document.getElementById('tourText').textContent  = step.text;
+
+  // ── Progress dots ──
+  document.querySelectorAll('.t-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === tourIdx)
+  );
+
+  // ── Nav buttons ──
+  const prevBtn = document.getElementById('tourPrev');
+  const nextBtn = document.getElementById('tourNext');
+  prevBtn.style.visibility = tourIdx === 0 ? 'hidden' : 'visible';
+  nextBtn.textContent = tourIdx === tourSteps.length - 1 ? '✅ إنهاء الجولة' : 'التالي ←';
+
+  // ── Show overlay + box ──
+  overlay.classList.add('active');
+  box.classList.remove('visible');
+  // Force reflow so animation re-triggers on each step
+  void box.offsetWidth;
+  box.classList.add('visible');
+}
+
+function tourMove(dir) {
+  tourIdx += dir;
+  if (tourIdx >= tourSteps.length) { endTour(); return; }
+  showTourStep();
+}
+
+function endTour() {
+  const overlay = document.getElementById('tourOverlay');
+  const box     = document.getElementById('tourBox');
+  overlay.classList.remove('active');
+  box.classList.remove('visible');
+  box.style.display = 'none';
+  if (tourHighlighted) {
+    tourHighlighted.classList.remove('tour-highlight');
+    tourHighlighted = null;
+  }
+}
+
+// ============================================================
+// 📱 MOBILE SIDEBAR
+// ============================================================
+function openSidebar() {
+  document.querySelector('.sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ============================================================
+// 🧭 MOBILE PAGE NAV OVERLAY
+// ============================================================
+function toggleMobileMenu() {
+  const ov = document.getElementById('spmOverlay');
+  const hb = document.getElementById('spmHamburger');
+  const isOpen = ov.classList.toggle('open');
+  hb.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', function() {
+  // Restore dark mode preference
+  if (localStorage.getItem('spm_dark')) {
+    document.body.classList.add('dark');
+    document.getElementById('darkBtn').textContent = '☀️';
+  }
+  applyChartTheme();
+  renderSidebar();
+  renderAlerts();
+  // Deep-link from overview.html: auto-select the student clicked there
+  const deepId = parseInt(sessionStorage.getItem('spm_open'));
+  sessionStorage.removeItem('spm_open');
+  selectStudent(deepId && students.find(s=>s.id===deepId) ? deepId : 1);
+});
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('spmNav');
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+</script>
+</body>
+</html>

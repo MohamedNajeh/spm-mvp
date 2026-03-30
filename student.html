@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPM — بوابة الطالب</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #0D1B5E;
+      --accent:  #00C9B1;
+      --danger:  #EF4444;
+      --warning: #F59E0B;
+      --success: #10B981;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F4F8; }
+
+    /* ─── Login Screen ─── */
+    #loginScreen {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0D1B5E 0%, #1a3a8f 60%, #00C9B1 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-card {
+      background: white; border-radius: 20px; padding: 40px 36px;
+      width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-input {
+      width: 100%; padding: 12px 14px; border: 2px solid #E5E7EB;
+      border-radius: 10px; font-size: 15px; text-align: right;
+      outline: none; transition: border 0.2s; font-family: inherit;
+    }
+    .login-input:focus { border-color: var(--accent); }
+    .login-btn {
+      width: 100%; padding: 13px; background: var(--primary); color: white;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: background 0.2s; font-family: inherit;
+    }
+    .login-btn:hover { background: #1a2d8f; }
+
+    /* ─── Dashboard ─── */
+    #dashboard { display: none; }
+
+    /* ── Modern Glass Nav ── */
+    .spm-nav {
+      position: sticky; top: 0; z-index: 500;
+      height: 62px; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,27,94,0.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      animation: spmNavIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .spm-nav.scrolled { background: rgba(13,27,94,0.98); box-shadow: 0 4px 32px rgba(0,0,0,0.4); }
+    @keyframes spmNavIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .spm-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; flex-shrink: 0; }
+    .spm-logo {
+      background: linear-gradient(135deg,#00C9B1,#00b0a0);
+      border-radius: 10px; padding: 6px 11px;
+      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #0D1B5E;
+      box-shadow: 0 0 18px rgba(0,201,177,0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .spm-brand:hover .spm-logo { transform: scale(1.1) rotate(-3deg); box-shadow: 0 0 28px rgba(0,201,177,0.65); }
+    .spm-brand-text { display: flex; flex-direction: column; }
+    .spm-brand-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
+    .spm-brand-sub  { font-size: 10px; opacity: 0.4; }
+    .spm-pill-track {
+      display: flex; align-items: center;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50px; padding: 4px 5px; gap: 2px;
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+    .spm-link {
+      padding: 7px 16px; border-radius: 50px;
+      font-size: 12.5px; font-weight: 600; text-decoration: none;
+      color: rgba(255,255,255,0.52);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap;
+    }
+    .spm-link:hover { color: white; background: rgba(255,255,255,0.11); transform: translateY(-1px); }
+    .spm-link.active { color: white; background: rgba(255,255,255,0.18); box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.12); }
+    .spm-nav-actions { display: flex; align-items: center; gap: 6px; }
+    .spm-act-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 13px; border-radius: 10px;
+      font-size: 12.5px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .spm-act-logout { background: rgba(239,68,68,0.12); color: #fca5a5; border-color: rgba(239,68,68,0.22); }
+    .spm-act-logout:hover { background: rgba(239,68,68,0.25); transform: translateY(-1px); }
+    .spm-hamburger {
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px; width: 40px; height: 40px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; cursor: pointer; transition: background 0.2s;
+    }
+    .spm-hamburger:hover { background: rgba(255,255,255,0.18); }
+    .spm-hamburger span {
+      display: block; width: 18px; height: 2px; background: white; border-radius: 2px;
+      transition: transform 0.3s cubic-bezier(0.23,1,0.32,1), opacity 0.25s; transform-origin: center;
+    }
+    .spm-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .spm-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .spm-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .spm-mobile-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(7,14,40,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
+    }
+    .spm-mobile-overlay.open { opacity: 1; pointer-events: all; }
+    .spm-mob-close {
+      position: absolute; top: 18px; left: 18px; width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      color: white; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .spm-mob-close:hover { background: rgba(255,255,255,0.18); }
+    .spm-mob-links { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; padding: 0 28px; }
+    .spm-mob-link {
+      display: block; width: 100%; max-width: 340px; padding: 16px 24px;
+      border-radius: 14px; font-size: 16px; font-weight: 700; text-align: center;
+      text-decoration: none; color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+      opacity: 0; transform: translateY(24px); transition: all 0.28s ease;
+    }
+    .spm-mobile-overlay.open .spm-mob-link { opacity: 1; transform: translateY(0); }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(1) { transition-delay: 0.06s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(2) { transition-delay: 0.12s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(3) { transition-delay: 0.18s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(4) { transition-delay: 0.24s; }
+    .spm-mobile-overlay.open .spm-mob-link:nth-child(5) { transition-delay: 0.30s; }
+    .spm-mob-link:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(-4px); }
+    .spm-mob-link.active { background: rgba(0,201,177,0.12); border-color: rgba(0,201,177,0.25); color: #00C9B1; }
+    @media (max-width: 768px) {
+      .spm-nav { padding: 0 14px !important; }
+      .spm-pill-track { display: none; }
+      .spm-brand-sub  { display: none; }
+      .spm-hamburger  { display: flex; }
+      .spm-hide-mob   { display: none !important; }
+    }
+    .card { background: white; border-radius: 14px; box-shadow: 0 2px 14px rgba(0,0,0,0.07); }
+    .stat-card {
+      background: white; border-radius: 14px; padding: 20px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.07); text-align: center;
+    }
+
+    /* Skill bars */
+    .skill-row { margin-bottom: 18px; }
+    .skill-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .skill-label { font-size: 14px; font-weight: 600; color: #374151; }
+    .skill-pct   { font-size: 13px; font-weight: 700; }
+    .skill-bg    { background: #E5E7EB; border-radius: 999px; height: 12px; }
+    .skill-fill  { height: 12px; border-radius: 999px; transition: width 0.8s ease; }
+
+    /* Action items */
+    .action-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px; border-radius: 10px; margin-bottom: 10px;
+      border: 1px solid #E5E7EB;
+    }
+    .action-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .action-urgent { background: #FFF5F5; border-color: #FECACA; }
+    .action-normal { background: #F0FDF4; border-color: #BBF7D0; }
+    .action-tip    { background: #EFF6FF; border-color: #BFDBFE; }
+
+    /* Badge */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+    }
+    .badge-high { background:#FEE2E2; color:#DC2626; }
+    .badge-med  { background:#FEF3C7; color:#D97706; }
+    .badge-low  { background:#D1FAE5; color:#059669; }
+
+    /* Progress steps */
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px dashed #E5E7EB;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-circle {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-done   { background: #D1FAE5; color: #059669; }
+    .step-active { background: #DBEAFE; color: #1D4ED8; }
+    .step-todo   { background: #F3F4F6; color: #9CA3AF; }
+
+    /* Radar chart container */
+    .radar-wrap { max-width: 260px; margin: 0 auto; }
+
+    /* Motivational banner */
+    .motivation-banner {
+      background: linear-gradient(135deg, #0D1B5E, #1a3a8f);
+      color: white; border-radius: 14px; padding: 20px 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    /* logout btn */
+    .logout-btn {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      color: white; padding: 6px 14px; border-radius: 8px; font-size: 13px;
+      cursor: pointer; transition: background 0.2s; font-family: inherit;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+    @media (max-width: 768px) {
+      #studentBody { padding: 16px 12px !important; }
+      .login-card { width: 92vw !important; padding: 28px 20px !important; }
+      #dashboard > div[style*="max-width:1100px"] { padding: 16px 12px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:inline-flex;align-items:center;gap:10px;background:#0D1B5E;padding:10px 20px;border-radius:12px;">
+        <span style="color:#00C9B1;font-weight:900;font-size:18px;letter-spacing:2px;">SPM</span>
+        <span style="color:white;font-size:13px;">خارطة الأداء الذكية</span>
+      </div>
+      <div style="margin-top:16px;font-size:22px;font-weight:800;color:#111827;">بوابة الطالب</div>
+      <div style="font-size:13px;color:#6B7280;margin-top:4px;">سجّل دخولك لتطلع على تقييماتك وخطة تطويرك</div>
+    </div>
+
+    <!-- Student selector (mock login) -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">اختر الرقم الجامعي</label>
+      <select id="studentSelect" class="login-input">
+        <option value="">— اختر —</option>
+        <option value="1">20221045 — أحمد علي العمري</option>
+        <option value="2">20221189 — ريم سالم الزهراني</option>
+        <option value="3">20221302 — خالد محمد الشمري</option>
+        <option value="4">20221456 — سارة أحمد الحربي</option>
+        <option value="5">20221578 — محمد ناصر القحطاني</option>
+        <option value="6">20221699 — نورة يوسف العتيبي</option>
+      </select>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">كلمة المرور</label>
+      <input type="password" class="login-input" placeholder="••••••••" value="1234" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">دخول ← </button>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:#9CA3AF;">
+      جامعة الأمير سطام بن عبدالعزيز
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     STUDENT DASHBOARD
+════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- Modern Nav -->
+  <nav class="spm-nav" id="spmNav">
+    <!-- Brand: shows student name after login -->
+    <a class="spm-brand" href="landing.html">
+      <span class="spm-logo">SPM</span>
+      <div class="spm-brand-text">
+        <span class="spm-brand-name" id="headerName">خارطة الأداء الذكية</span>
+        <span class="spm-brand-sub" id="headerSub">بوابة الطالب • جامعة سطام</span>
+      </div>
+    </a>
+
+    <!-- Pill Nav -->
+    <div class="spm-pill-track">
+      <a href="landing.html"  class="spm-link">🏠 الرئيسية</a>
+      <a href="index.html"    class="spm-link">🎓 المرشد</a>
+      <a href="student.html"  class="spm-link active">👤 الطالب</a>
+      <a href="overview.html" class="spm-link">🏛️ المؤسسة</a>
+    </div>
+
+    <!-- Actions -->
+    <div class="spm-nav-actions">
+      <button onclick="doLogout()" class="spm-act-btn spm-act-logout spm-hide-mob">تسجيل خروج</button>
+      <button class="spm-hamburger" id="spmHamburger" onclick="toggleMobileMenu()" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Full-screen Menu -->
+  <div class="spm-mobile-overlay" id="spmOverlay">
+    <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
+    <div class="spm-mob-links">
+      <a href="landing.html"  class="spm-mob-link">🏠 الرئيسية</a>
+      <a href="index.html"    class="spm-mob-link">🎓 لوحة المرشد</a>
+      <a href="student.html"  class="spm-mob-link active">👤 بوابة الطالب</a>
+      <a href="overview.html" class="spm-mob-link">🏛️ نظرة المؤسسة</a>
+      <button onclick="toggleMobileMenu();doLogout();" class="spm-mob-link" style="border:none;cursor:pointer;font-family:inherit;color:#fca5a5;background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.2);">تسجيل خروج</button>
+    </div>
+  </div>
+
+  <div style="max-width:1100px;margin:0 auto;padding:24px 20px;" id="studentBody">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     DATA + LOGIC
+════════════════════════════════════ -->
+<script>
+// ── same data as index.html ──────────────────────────────
+const students = [
+  {
+    id:1, name:"أحمد علي العمري", studentId:"20221045",
+    level:"المستوى الثالث", major:"علوم الحاسب", risk:"high",
+    skills:[{name:"فهم",score:40},{name:"تحليل",score:35},{name:"تطبيق",score:20},{name:"كتابة",score:15}],
+    grades:{
+      assignments:  {score:15,max:25,label:"التكاليف"},
+      midterms:     {score:11,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:8, max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:38,after:null},{label:"أسبوع 3",before:42,after:null},
+      {label:"أسبوع 5",before:40,after:null},{label:"بعد التدريب",before:null,after:58},
+      {label:"أسبوع 8",before:null,after:65},
+    ],
+    devSkills:["تقوية مهارات التطبيق العملي","تعزيز مهارات الكتابة الأكاديمية"],
+    actions:[
+      {type:"urgent",icon:"🚨",title:"تواصل مع مرشدك الأكاديمي هذا الأسبوع",desc:"مستوى الخطر مرتفع — لا تؤجل الاجتماع مع المرشد لوضع خطة تعافٍ."},
+      {type:"urgent",icon:"📚",title:"التحق ببرنامج تدريبي في مهارات التطبيق",desc:"مهارة التطبيق عندك 20% فقط. الالتحاق بورشة تطبيقية يرفعها لـ 60%+ خلال 4 أسابيع."},
+      {type:"normal",icon:"✏️",title:"راجع تكاليفك المتأخرة",desc:"درجة التكاليف 15/25 — مراجعة الواجبات مع المدرس ترفع نقاطك مباشرة."},
+      {type:"tip",   icon:"🤝",title:"تواصل مع زميل متفوق في الفصل",desc:"تعلم من الأقران أثبت فاعليته. اطلب مساعدة زميل في شرح مواد التطبيق والكتابة."},
+    ],
+    roadmap:[
+      {status:"done",  text:"تشخيص نقاط القوة والضعف"},
+      {status:"active",text:"جلسة مع المرشد الأكاديمي (هذا الأسبوع)"},
+      {status:"todo",  text:"الالتحاق ببرنامج دعم مهارات التطبيق"},
+      {status:"todo",  text:"رفع درجات التكاليف للـ 20/25"},
+      {status:"todo",  text:"إعادة تقييم المهارات بعد 4 أسابيع"},
+    ],
+    motivation:"أحمد، كل رحلة تبدأ بخطوة. أنت تعرف الآن أين نقاط ضعفك — وهذا أقوى سلاح لديك. 💪",
+  },
+  {
+    id:2, name:"ريم سالم الزهراني", studentId:"20221189",
+    level:"المستوى الثالث", major:"نظم المعلومات", risk:"high",
+    skills:[{name:"فهم",score:30},{name:"تحليل",score:25},{name:"تطبيق",score:45},{name:"كتابة",score:38}],
+    grades:{
+      assignments:  {score:13,max:25,label:"التكاليف"},
+      midterms:     {score:10,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:6, max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:30,after:null},{label:"أسبوع 3",before:32,after:null},
+      {label:"أسبوع 5",before:28,after:null},{label:"بعد التدريب",before:null,after:48},
+      {label:"أسبوع 8",before:null,after:55},
+    ],
+    devSkills:["تعزيز مهارات الفهم والاستيعاب","رفع مستوى التحليل النقدي"],
+    actions:[
+      {type:"urgent",icon:"🚨",title:"تواصل مع مرشدك الأكاديمي فوراً",desc:"خطر التعثر مرتفع جداً. الدعم المبكر يحدث فرقاً كبيراً."},
+      {type:"urgent",icon:"🧠",title:"برنامج تأهيلي في مهارات الفهم والاستيعاب",desc:"مهارة الفهم 30% — هذه الأساس لكل المهارات الأخرى. ابدأ بها أولاً."},
+      {type:"normal",icon:"🙋",title:"ارفع نسبة المشاركة الصفية",desc:"المشاركة 6/10 فقط. المشاركة تعزز الفهم وترفع درجاتك في نفس الوقت."},
+      {type:"tip",   icon:"📖",title:"خصص 30 دقيقة يومياً للمراجعة",desc:"الاتساق في المراجعة أهم من جلسة طويلة نادرة. ابدأ بـ 30 دقيقة كل يوم."},
+    ],
+    roadmap:[
+      {status:"done",  text:"تشخيص نقاط القوة والضعف"},
+      {status:"active",text:"جلسة عاجلة مع المرشد الأكاديمي"},
+      {status:"todo",  text:"برنامج تأهيلي في مهارات الفهم"},
+      {status:"todo",  text:"رفع نسبة المشاركة الصفية"},
+      {status:"todo",  text:"مراجعة دورية كل أسبوعين"},
+    ],
+    motivation:"ريم، التحدي الكبير يصنع القوي. لديك ما يكفي من الوقت لتغيير المسار — كل خطوة صغيرة تحسب. 🌟",
+  },
+  {
+    id:3, name:"خالد محمد الشمري", studentId:"20221302",
+    level:"المستوى الرابع", major:"علوم الحاسب", risk:"medium",
+    skills:[{name:"فهم",score:65},{name:"تحليل",score:60},{name:"تطبيق",score:40},{name:"كتابة",score:45}],
+    grades:{
+      assignments:  {score:18,max:25,label:"التكاليف"},
+      midterms:     {score:12,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:8, max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:58,after:null},{label:"أسبوع 3",before:62,after:null},
+      {label:"أسبوع 5",before:60,after:null},{label:"بعد التدريب",before:null,after:72},
+      {label:"أسبوع 8",before:null,after:78},
+    ],
+    devSkills:["تعزيز مهارات التطبيق العملي","رفع مستوى الكتابة التقنية"],
+    actions:[
+      {type:"normal",icon:"💻",title:"انضم لمشروع تطبيقي عملي",desc:"مهارة التطبيق 40% — الممارسة العملية هي أفضل طريقة لرفعها. ابحث عن مشروع في GitHub."},
+      {type:"normal",icon:"📝",title:"دورة الكتابة التقنية والتوثيق",desc:"الكتابة التقنية مهارة أساسية في سوق العمل. دورة قصيرة تفرق كثيراً في مستوى CV."},
+      {type:"tip",   icon:"🎓",title:"تواصل مع خريج في تخصصك",desc:"خريجو نفس التخصص يعرفون تماماً ما تحتاجه. ابحث في LinkedIn عن خريجي الجامعة."},
+      {type:"tip",   icon:"🏆",title:"شارك في مسابقة أو هاكاثون",desc:"المسابقات تطور المهارات بسرعة وتبني شبكة علاقات قوية."},
+    ],
+    roadmap:[
+      {status:"done",  text:"تشخيص نقاط القوة والضعف"},
+      {status:"done",  text:"تقوية الفهم والتحليل"},
+      {status:"active",text:"رفع مهارة التطبيق العملي"},
+      {status:"todo",  text:"دورة الكتابة التقنية"},
+      {status:"todo",  text:"التواصل مع خريج للإرشاد المهني"},
+    ],
+    motivation:"خالد، أنت في المسار الصحيح. بضع خطوات إضافية في التطبيق والكتابة وستصل للمستوى المتقدم. 🚀",
+  },
+  {
+    id:4, name:"سارة أحمد الحربي", studentId:"20221456",
+    level:"المستوى الرابع", major:"نظم المعلومات", risk:"medium",
+    skills:[{name:"فهم",score:70},{name:"تحليل",score:55},{name:"تطبيق",score:68},{name:"كتابة",score:62}],
+    grades:{
+      assignments:  {score:20,max:25,label:"التكاليف"},
+      midterms:     {score:13,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:9, max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:62,after:null},{label:"أسبوع 3",before:66,after:null},
+      {label:"أسبوع 5",before:64,after:null},{label:"بعد التدريب",before:null,after:74},
+      {label:"أسبوع 8",before:null,after:80},
+    ],
+    devSkills:["تطوير مهارات التحليل النقدي"],
+    actions:[
+      {type:"normal",icon:"🔍",title:"ورشة عمل في التحليل النقدي وحل المشكلات",desc:"مهارة التحليل 55% — تحتاج تعزيزاً. ورشة واحدة قد ترفعها للـ 75%."},
+      {type:"normal",icon:"🏅",title:"شاركي في مسابقة أكاديمية",desc:"مستواك ممتاز بما يكفي للمنافسة. المسابقات تشحذ مهارة التحليل تحت الضغط."},
+      {type:"tip",   icon:"🌐",title:"ابدئي في بناء Portfolio شخصي",desc:"مستواك الجيد يستحق إبرازه. ابني محفظة مشاريع على GitHub وLinkedIn."},
+    ],
+    roadmap:[
+      {status:"done",  text:"تشخيص نقاط القوة والضعف"},
+      {status:"done",  text:"تقوية الفهم والتطبيق والكتابة"},
+      {status:"active",text:"رفع مهارة التحليل النقدي"},
+      {status:"todo",  text:"المشاركة في مسابقة أكاديمية"},
+      {status:"todo",  text:"بناء Portfolio مهني"},
+    ],
+    motivation:"سارة، أداؤك مميز ومتوازن. خطوة في التحليل النقدي وستكونين من المتفوقين. أنت قريبة جداً! ✨",
+  },
+  {
+    id:5, name:"محمد ناصر القحطاني", studentId:"20221578",
+    level:"المستوى الخامس", major:"علوم الحاسب", risk:"low",
+    skills:[{name:"فهم",score:85},{name:"تحليل",score:80},{name:"تطبيق",score:78},{name:"كتابة",score:82}],
+    grades:{
+      assignments:  {score:23,max:25,label:"التكاليف"},
+      midterms:     {score:14,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:10,max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:75,after:null},{label:"أسبوع 3",before:78,after:null},
+      {label:"أسبوع 5",before:80,after:null},{label:"بعد التدريب",before:null,after:86},
+      {label:"أسبوع 8",before:null,after:90},
+    ],
+    devSkills:["الإبداع والابتكار","القيادة الأكاديمية"],
+    actions:[
+      {type:"normal",icon:"🌟",title:"رشّح نفسك لبرنامج الطلاب المتفوقين",desc:"معدلك وأداؤك يؤهلانك تماماً. دعم الأقران يطور مهارات القيادة بشكل استثنائي."},
+      {type:"normal",icon:"🔬",title:"شارك في بحث علمي مع هيئة التدريس",desc:"المستوى الخامس هو الوقت المثالي للدخول في الأبحاث الأكاديمية."},
+      {type:"tip",   icon:"🏆",title:"شارك في هاكاثون أو مسابقة تقنية خارجية",desc:"منافسات خارج الجامعة تبني الخبرة وتفتح أبواب التوظيف."},
+    ],
+    roadmap:[
+      {status:"done",  text:"إتقان المهارات الأساسية"},
+      {status:"done",  text:"الحصول على معدل ممتاز"},
+      {status:"active",text:"بناء مشاريع وأبحاث متميزة"},
+      {status:"todo",  text:"التقدم لبرنامج الطلاب المتفوقين"},
+      {status:"todo",  text:"التأهل لفرص التدريب الصيفي"},
+    ],
+    motivation:"محمد، أنت من بين أفضل 5% في الفصل! حافظ على هذا المستوى وانطلق نحو التميز. 🌠",
+  },
+  {
+    id:6, name:"نورة يوسف العتيبي", studentId:"20221699",
+    level:"المستوى الخامس", major:"نظم المعلومات", risk:"low",
+    skills:[{name:"فهم",score:92},{name:"تحليل",score:88},{name:"تطبيق",score:85},{name:"كتابة",score:90}],
+    grades:{
+      assignments:  {score:25,max:25,label:"التكاليف"},
+      midterms:     {score:15,max:15,label:"الاختبارات الفصلية"},
+      participation:{score:10,max:10,label:"المشاركة"},
+    },
+    progress:[
+      {label:"أسبوع 1",before:82,after:null},{label:"أسبوع 3",before:85,after:null},
+      {label:"أسبوع 5",before:87,after:null},{label:"بعد التدريب",before:null,after:92},
+      {label:"أسبوع 8",before:null,after:95},
+    ],
+    devSkills:["التميز والريادة الأكاديمية"],
+    actions:[
+      {type:"normal",icon:"👩‍🏫",title:"المساعد الأكاديمي وإرشاد الطلاب",desc:"مهاراتك الاستثنائية مؤهلة لدعم زميلاتك. برنامج المساعد الأكاديمي مفتوح لك."},
+      {type:"normal",icon:"💡",title:"شاركي في هاكاثونات ومسابقات تقنية",desc:"الهاكاثونات تبني شبكة علاقات واسعة في مجال التقنية وتفتح أبواباً مهنية استثنائية."},
+      {type:"tip",   icon:"📜",title:"توجهي نحو البحث العلمي والنشر",desc:"درجاتك ومهاراتك تؤهلك للنشر الأكاديمي. تحدثي مع أستاذ في تخصصك."},
+    ],
+    roadmap:[
+      {status:"done",  text:"إتقان جميع المهارات الأساسية"},
+      {status:"done",  text:"تحقيق أعلى الدرجات في الفصل"},
+      {status:"active",text:"قيادة وإرشاد الطلاب"},
+      {status:"todo",  text:"نشر بحث أكاديمي"},
+      {status:"todo",  text:"القبول في برامج الدراسات العليا"},
+    ],
+    motivation:"نورة، أنت قمة الأداء في الفصل! الآن الوقت مناسب للتأثير في من حولك وبناء مسيرة استثنائية. 👑",
+  },
+];
+
+// ── helpers ──────────────────────────────────────────────
+function skillColor(s){ return s>=70?'#10B981':s>=40?'#F59E0B':'#EF4444'; }
+function skillLabel(s){ return s>=70?'متقدم ✅':s>=40?'متوسط ⚠️':'يحتاج تحسين 🔴'; }
+function riskLabel(r){  return r==='high'?'مرتفع':r==='medium'?'متوسط':'منخفض'; }
+function riskBadge(r){  return r==='high'?'badge-high':r==='medium'?'badge-med':'badge-low'; }
+function riskEmoji(r){  return r==='high'?'🔴':r==='medium'?'🟡':'🟢'; }
+function totalPct(g){
+  const t = g.assignments.score + g.midterms.score + g.participation.score;
+  const m = g.assignments.max   + g.midterms.max   + g.participation.max;
+  return Math.round(t/m*100);
+}
+function overallSkill(skills){ return Math.round(skills.reduce((a,b)=>a+b.score,0)/skills.length); }
+
+let activeChart = null;
+
+// ── LOGIN ─────────────────────────────────────────────────
+function doLogin(){
+  const id = document.getElementById('studentSelect').value;
+  if(!id){ alert('يرجى اختيار الرقم الجامعي'); return; }
+  const s = students.find(x=>x.id==id);
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display   = 'block';
+  document.getElementById('headerName').textContent = s.name;
+  document.getElementById('headerSub').textContent  = s.studentId + ' • ' + s.major + ' • ' + s.level;
+  renderStudentDashboard(s);
+}
+
+function doLogout(){
+  document.getElementById('dashboard').style.display   = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('studentSelect').value = '';
+  if(activeChart){ activeChart.destroy(); activeChart = null; }
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderStudentDashboard(s){
+  const pct  = totalPct(s.grades);
+  const avg  = overallSkill(s.skills);
+  const body = document.getElementById('studentBody');
+
+  body.innerHTML = `
+
+    <!-- Motivation Banner -->
+    <div class="motivation-banner mb-6">
+      <div style="font-size:36px;flex-shrink:0;">👋</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:4px;">مرحباً، ${s.name.split(' ')[0]}!</div>
+        <div style="font-size:13px;opacity:0.85;">${s.motivation}</div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid gap-4 mb-6" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat-card">
+        <div style="font-size:32px;font-weight:900;color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</div>
+        <div style="font-size:12px;color:#6B7280;margin-top:4px;">إجمالي الأعمال</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:32px;font-weight:900;color:${skillColor(avg)};">${avg}%</div>
+        <div style="font-size:12px;color:#6B7280;margin-top:4px;">متوسط المهارات</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:32px;">${riskEmoji(s.risk)}</div>
+        <div style="font-size:13px;font-weight:700;margin-top:4px;"><span class="badge ${riskBadge(s.risk)}">${riskLabel(s.risk)}</span></div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px;">مؤشر التعثر</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:32px;font-weight:900;color:#0D1B5E;">${s.grades.participation.score}/${s.grades.participation.max}</div>
+        <div style="font-size:12px;color:#6B7280;margin-top:4px;">المشاركة</div>
+      </div>
+    </div>
+
+    <!-- Row: Skills + Grades -->
+    <div class="grid gap-5 mb-5" style="grid-template-columns:1fr 1fr;">
+
+      <!-- Skills -->
+      <div class="card p-5">
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;">📊 مستوى مهاراتك</div>
+        ${s.skills.map(sk => `
+          <div class="skill-row">
+            <div class="skill-header">
+              <span class="skill-label">${sk.name}</span>
+              <span class="skill-pct" style="color:${skillColor(sk.score)};">${sk.score}% — ${skillLabel(sk.score)}</span>
+            </div>
+            <div class="skill-bg">
+              <div class="skill-fill" style="width:${sk.score}%;background:${skillColor(sk.score)};"></div>
+            </div>
+          </div>
+        `).join('')}
+        <div style="margin-top:14px;padding:10px 12px;background:#F9FAFB;border-radius:8px;font-size:12px;color:#6B7280;">
+          💡 المهارات محسوبة على أساس أداءك في أعمال السنة والاختبارات الفصلية
+        </div>
+      </div>
+
+      <!-- Grades -->
+      <div class="card p-5">
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;">📋 درجاتك التفصيلية</div>
+        ${Object.values(s.grades).map(g => {
+          const gp = Math.round(g.score/g.max*100);
+          const col= gp>=70?'#10B981':gp>=50?'#F59E0B':'#EF4444';
+          return `
+            <div style="margin-bottom:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:600;">${g.label}</span>
+                <span style="font-size:16px;font-weight:900;color:${col};">${g.score}<span style="font-size:12px;font-weight:400;color:#9CA3AF;">/${g.max}</span></span>
+              </div>
+              <div style="background:#E5E7EB;border-radius:999px;height:10px;">
+                <div style="width:${gp}%;background:${col};height:10px;border-radius:999px;"></div>
+              </div>
+              <div style="font-size:11px;color:${col};text-align:left;margin-top:2px;">${gp}%</div>
+            </div>`;
+        }).join('')}
+        <div style="border-top:2px dashed #E5E7EB;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:#374151;">الإجمالي</span>
+          <span style="font-size:24px;font-weight:900;color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Chart -->
+    <div class="card p-5 mb-5">
+      <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">📈 تطور أدائك عبر الفصل الدراسي</div>
+      <canvas id="progressChart" height="80"></canvas>
+    </div>
+
+    <!-- Row: Action Plan + Roadmap -->
+    <div class="grid gap-5" style="grid-template-columns:1fr 1fr;">
+
+      <!-- Action Plan -->
+      <div class="card p-5">
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">🎯 خطة التحسين الشخصية</div>
+        ${s.actions.map(a => `
+          <div class="action-item action-${a.type}">
+            <div class="action-icon" style="background:${a.type==='urgent'?'#FEE2E2':a.type==='normal'?'#D1FAE5':'#DBEAFE'};">
+              ${a.icon}
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:3px;">${a.title}</div>
+              <div style="font-size:12px;color:#6B7280;line-height:1.5;">${a.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Roadmap -->
+      <div class="card p-5">
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">🗺️ خارطة الطريق الأكاديمية</div>
+        ${s.roadmap.map((step,i) => `
+          <div class="step">
+            <div class="step-circle step-${step.status}">
+              ${step.status==='done'?'✓':i+1}
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:${step.status==='active'?700:500};
+                   color:${step.status==='done'?'#6B7280':step.status==='active'?'#1D4ED8':'#9CA3AF'};">
+                ${step.text}
+              </div>
+              ${step.status==='active'?`<div style="font-size:11px;color:#3B82F6;margin-top:2px;">← الخطوة الحالية</div>`:''}
+              ${step.status==='done'?`<div style="font-size:11px;color:#10B981;margin-top:2px;">مكتمل ✓</div>`:''}
+            </div>
+          </div>
+        `).join('')}
+
+        <!-- Dev Skills -->
+        <div style="margin-top:16px;padding:12px;background:#FFFBEB;border-radius:10px;border:1px solid #FDE68A;">
+          <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px;">⚡ المهارات المستهدفة للتطوير</div>
+          ${s.devSkills.map(d=>`
+            <div style="font-size:12px;color:#78350F;padding:3px 0;">• ${d}</div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ── Progress Chart ──
+  if(activeChart){ activeChart.destroy(); }
+  const labels = s.progress.map(p=>p.label);
+  const before = s.progress.map(p=>p.before);
+  const after  = s.progress.map(p=>p.after);
+  activeChart = new Chart(document.getElementById('progressChart'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'قبل التدريب',
+          data: before,
+          borderColor:'#F59E0B', backgroundColor:'rgba(245,158,11,0.08)',
+          pointBackgroundColor:'#F59E0B', pointRadius:5, tension:0.3, spanGaps:false,
+        },
+        {
+          label:'بعد التدريب',
+          data: after,
+          borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.08)',
+          pointBackgroundColor:'#10B981', pointRadius:5, tension:0.3, spanGaps:false,
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{position:'bottom', labels:{font:{size:12},boxWidth:14}},
+        tooltip:{
+          callbacks:{
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw ?? '—'}%`
+          }
+        }
+      },
+      scales:{
+        y:{ min:0, max:100, ticks:{callback:v=>v+'%', font:{size:11}}, grid:{color:'#F3F4F6'} },
+        x:{ ticks:{font:{size:11}} }
+      }
+    }
+  });
+}
+
+// Also support ?id= param for direct link from advisor dashboard
+const params = new URLSearchParams(window.location.search);
+const paramId = params.get('id');
+if(paramId){
+  document.getElementById('studentSelect').value = paramId;
+  doLogin();
+}
+
+// ── Mobile nav overlay ──
+function toggleMobileMenu() {
+  const ov = document.getElementById('spmOverlay');
+  const hb = document.getElementById('spmHamburger');
+  const isOpen = ov.classList.toggle('open');
+  hb.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
+// ── Nav scroll effect ──
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('spmNav');
+  if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+</script>
+</body>
+</html>
