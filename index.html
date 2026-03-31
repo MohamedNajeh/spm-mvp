@@ -450,11 +450,9 @@
 
     @media (max-width: 768px) {
       .spm-nav { padding: 0 14px !important; }
-      .spm-pill-track { display: none; }
       .spm-brand-sub  { display: none; }
       .spm-hamburger  { display: flex; }
       .spm-hide-mob   { display: none !important; }
-      .stu-fab        { display: flex; }
       #sidebarOverlay { display: block; }
 
       /* ── Sidebar → slide-in drawer ── */
@@ -525,38 +523,15 @@
     </div>
   </a>
 
-  <!-- Pill Nav -->
-  <div class="spm-pill-track">
-    <a href="landing.html"  class="spm-link">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-link active">🎓 المرشد</a>
-    <a href="student.html"  class="spm-link">👤 الطالب</a>
-    <a href="overview.html" class="spm-link">🏛️ المؤسسة</a>
-  </div>
-
   <!-- Actions -->
   <div class="spm-nav-actions">
     <button onclick="startTour()"  class="spm-act-btn spm-act-tour spm-hide-mob" title="جولة إرشادية">🚀 جولة سريعة</button>
-    <button onclick="toggleDark()" class="spm-act-btn spm-act-dark"  title="الوضع الليلي" id="darkBtn">🌙</button>
-    <button class="spm-hamburger" id="spmHamburger" onclick="toggleMobileMenu()" aria-label="القائمة">
+    <button onclick="toggleDark()" class="spm-act-btn spm-act-dark" title="الوضع الليلي" id="darkBtn">🌙</button>
+    <button class="spm-hamburger" id="spmHamburger" onclick="openSidebar()" aria-label="القائمة">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
-
-<!-- Mobile Full-screen Menu -->
-<div class="spm-mobile-overlay" id="spmOverlay">
-  <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
-  <div class="spm-mob-links">
-    <a href="landing.html"  class="spm-mob-link">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-mob-link active">🎓 لوحة المرشد</a>
-    <a href="student.html"  class="spm-mob-link">👤 بوابة الطالب</a>
-    <a href="overview.html" class="spm-mob-link">🏛️ نظرة المؤسسة</a>
-    <button onclick="toggleMobileMenu();openSidebar();" class="spm-mob-link" style="border:none;cursor:pointer;font-family:inherit;">📋 قائمة الطلاب</button>
-  </div>
-</div>
-
-<!-- Student List FAB (mobile) -->
-<button class="stu-fab" onclick="openSidebar()" title="قائمة الطلاب">📋</button>
 
 <!-- ===== TOUR OVERLAY (click to close) ===== -->
 <div id="tourOverlay" onclick="endTour()"></div>
@@ -613,21 +588,35 @@
 
     <div id="studentList"></div>
 
-    <!-- Quick Links -->
+    <!-- Page Navigation -->
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
-      <div style="font-size:11px;opacity:0.5;margin-bottom:8px;">روابط سريعة</div>
-      <a id="studentPortalLink" href="student.html" target="_blank"
-         style="display:block;text-align:center;padding:9px;background:var(--accent);color:#0D1B5E;
-                border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:opacity 0.2s;margin-bottom:8px;"
-         onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
-        🎓 بوابة الطالب
-      </a>
-      <a href="overview.html"
-         style="display:block;text-align:center;padding:9px;background:rgba(255,255,255,0.12);color:white;
-                border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:opacity 0.2s;"
-         onmouseover="this.style.opacity=0.75" onmouseout="this.style.opacity=1">
-        🏛️ نظرة المؤسسة
-      </a>
+      <div style="font-size:11px;opacity:0.5;margin-bottom:10px;letter-spacing:0.5px;">التنقل بين الصفحات</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <a href="landing.html"
+           style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+                  background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  font-size:12px;font-weight:600;text-decoration:none;transition:all 0.18s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='white'"
+           onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.75)'">
+          <span style="font-size:15px;">🏠</span> الرئيسية
+        </a>
+        <a id="studentPortalLink" href="student.html" target="_blank"
+           style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+                  background:rgba(0,201,177,0.15);color:#00C9B1;border:1px solid rgba(0,201,177,0.25);
+                  font-size:12px;font-weight:700;text-decoration:none;transition:all 0.18s;"
+           onmouseover="this.style.background='rgba(0,201,177,0.25)'"
+           onmouseout="this.style.background='rgba(0,201,177,0.15)'">
+          <span style="font-size:15px;">👤</span> بوابة الطالب
+        </a>
+        <a href="overview.html"
+           style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
+                  background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);
+                  font-size:12px;font-weight:600;text-decoration:none;transition:all 0.18s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='white'"
+           onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.75)'">
+          <span style="font-size:15px;">🏛️</span> نظرة المؤسسة
+        </a>
+      </div>
     </div>
 
     <!-- Legend -->
@@ -1709,16 +1698,6 @@ function closeSidebar() {
   document.getElementById('sidebarOverlay').classList.remove('open');
 }
 
-// ============================================================
-// 🧭 MOBILE PAGE NAV OVERLAY
-// ============================================================
-function toggleMobileMenu() {
-  const ov = document.getElementById('spmOverlay');
-  const hb = document.getElementById('spmHamburger');
-  const isOpen = ov.classList.toggle('open');
-  hb.classList.toggle('open', isOpen);
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-}
 
 // ============================================================
 // INIT
