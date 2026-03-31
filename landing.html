@@ -355,34 +355,11 @@
     </div>
   </a>
 
-  <!-- Pill Nav -->
-  <div class="spm-pill-track">
-    <a href="landing.html"  class="spm-link active">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-link">🎓 المرشد</a>
-    <a href="student.html"  class="spm-link">👤 الطالب</a>
-    <a href="overview.html" class="spm-link">🏛️ المؤسسة</a>
-  </div>
-
-  <!-- CTA + Hamburger -->
+  <!-- CTA only -->
   <div class="spm-nav-actions">
-    <a href="index.html" class="spm-cta-btn spm-hide-mob">ابدأ التجربة ←</a>
-    <button class="spm-hamburger" id="spmHamburger" onclick="toggleMobileMenu()" aria-label="القائمة">
-      <span></span><span></span><span></span>
-    </button>
+    <a href="index.html" class="spm-cta-btn">ابدأ التجربة ←</a>
   </div>
 </nav>
-
-<!-- Mobile Full-screen Menu -->
-<div class="spm-mobile-overlay" id="spmOverlay">
-  <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
-  <div class="spm-mob-links">
-    <a href="landing.html"  class="spm-mob-link active">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-mob-link">🎓 لوحة المرشد</a>
-    <a href="student.html"  class="spm-mob-link">👤 بوابة الطالب</a>
-    <a href="overview.html" class="spm-mob-link">🏛️ نظرة المؤسسة</a>
-    <a href="index.html"    class="spm-mob-link spm-mob-cta">ابدأ التجربة ←</a>
-  </div>
-</div>
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero" style="max-width:100%;padding:0;">
@@ -634,15 +611,6 @@ if (heroStats) {
     if (entries[0].isIntersecting) { animateCounters(); observer.disconnect(); }
   }, { threshold: 0.5 });
   observer.observe(heroStats);
-}
-
-// ── Nav mobile toggle ──
-function toggleMobileMenu() {
-  const ov = document.getElementById('spmOverlay');
-  const hb = document.getElementById('spmHamburger');
-  const isOpen = ov.classList.toggle('open');
-  hb.classList.toggle('open', isOpen);
-  document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 
 // ── Nav scroll effect ──
