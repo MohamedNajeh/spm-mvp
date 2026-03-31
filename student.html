@@ -219,6 +219,34 @@
       #studentBody { padding: 16px 12px !important; }
       .login-card { width: 92vw !important; padding: 28px 20px !important; }
       #dashboard > div[style*="max-width:1100px"] { padding: 16px 12px !important; }
+
+      /* Motivation banner: stack on small screens */
+      .motivation-banner { flex-direction: column; gap: 10px; text-align: center; padding: 16px; }
+
+      /* 4-col stat cards → 2×2 */
+      #studentBody .grid[style*="grid-template-columns:repeat(4,1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      /* 2-col grids (skills+grades, action+roadmap) → 1-col */
+      #studentBody .grid[style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+      /* Reduce stat font sizes */
+      .stat-card > div:first-child { font-size: 24px !important; }
+
+      /* Progress chart: shorter on mobile */
+      #studentBody canvas { max-height: 220px; }
+
+      /* Step layout inside roadmap */
+      .step { padding: 10px 0; }
+    }
+
+    @media (max-width: 480px) {
+      /* On very small phones, stack 4 stat cards to 1-col */
+      #studentBody .grid[style*="grid-template-columns:repeat(4,1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .login-card { padding: 24px 16px !important; }
     }
   </style>
 </head>

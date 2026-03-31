@@ -201,26 +201,26 @@
       /* KPI grid: 5-col → 2-col */
       .kpi-grid { grid-template-columns: 1fr 1fr !important; }
 
-      /* Charts row: 3-col → 1-col */
-      section > div[style*="grid-template-columns:1fr 1.3fr 1.3fr"],
-      section > div[style*="grid-template-columns:1.4fr 1fr"] {
+      /* Charts rows: collapse to 1-col (grids are direct children of .page) */
+      .page > div[style*="grid-template-columns:1fr 1.3fr 1.3fr"],
+      .page > div[style*="grid-template-columns:1.4fr 1fr"] {
         grid-template-columns: 1fr !important;
       }
 
-      /* Table: horizontal scroll + hide less important columns */
-      .card[style*="overflow-x:auto"] { overflow-x: auto; }
-      .stu-table { min-width: 600px; }
-      .stu-table th:nth-child(3),
-      .stu-table td:nth-child(3) { display: none; }
+      /* Table: horizontal scroll */
+      .stu-table { min-width: 580px; }
+
+      /* Table filter controls: wrap on narrow screens */
+      .card[style*="overflow-x:auto"] > div > div[style*="display:flex;gap:8px"] {
+        flex-wrap: wrap;
+      }
+      #tableSearch { width: 100% !important; }
 
       /* KPI val smaller */
       .kpi-val { font-size: 26px !important; }
 
-      /* Section titles */
-      .sec-title { font-size: 22px !important; }
-
-      /* Footer */
-      footer { flex-direction: column; gap: 12px; text-align: center; }
+      /* Skills heatmap: scroll */
+      #skillsHeatmap { overflow-x: auto; }
     }
 
     @media (max-width: 480px) {
