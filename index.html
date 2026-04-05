@@ -7,15 +7,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
-      --primary: #0D1B5E;
-      --primary-light: #1a2d8f;
-      --accent: #00C9B1;
+      --primary: #3c7974;
+      --primary-light: #6ac7bd;
+      --accent: #6ac7bd;
       --danger: #EF4444;
       --warning: #F59E0B;
       --success: #10B981;
     }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F4F8; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
+    body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background: #f1f9f7; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
 
     /* ══════════════════════════════════════════════════════════
        MODERN GLASS NAV
@@ -24,14 +25,14 @@
       position: sticky; top: 0; z-index: 500;
       height: 62px; padding: 0 28px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(13,27,94,0.92);
+      background: rgba(60,121,116,0.92);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(255,255,255,0.07);
       animation: spmNavIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
       transition: background 0.3s, box-shadow 0.3s;
     }
     .spm-nav.scrolled {
-      background: rgba(13,27,94,0.98);
+      background: rgba(60,121,116,0.98);
       box-shadow: 0 4px 32px rgba(0,0,0,0.4);
     }
     @keyframes spmNavIn {
@@ -43,15 +44,15 @@
       text-decoration: none; color: white; flex-shrink: 0;
     }
     .spm-logo {
-      background: linear-gradient(135deg,#00C9B1,#00b0a0);
+      background: linear-gradient(135deg,#6ac7bd,#3c7974);
       border-radius: 10px; padding: 6px 11px;
-      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #0D1B5E;
-      box-shadow: 0 0 18px rgba(0,201,177,0.35);
+      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #3c7974;
+      box-shadow: 0 0 18px rgba(106,199,189,0.35);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .spm-brand:hover .spm-logo {
       transform: scale(1.1) rotate(-3deg);
-      box-shadow: 0 0 28px rgba(0,201,177,0.65);
+      box-shadow: 0 0 28px rgba(106,199,189,0.65);
     }
     .spm-brand-text { display: flex; flex-direction: column; }
     .spm-brand-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
@@ -81,8 +82,8 @@
       font-size: 12.5px; font-weight: 600; font-family: inherit;
       cursor: pointer; border: 1px solid transparent; transition: all 0.2s ease;
     }
-    .spm-act-tour { background: rgba(0,201,177,0.12); color: #00C9B1; border-color: rgba(0,201,177,0.22); }
-    .spm-act-tour:hover { background: rgba(0,201,177,0.28); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,201,177,0.22); }
+    .spm-act-tour { background: rgba(106,199,189,0.12); color: #6ac7bd; border-color: rgba(106,199,189,0.22); }
+    .spm-act-tour:hover { background: rgba(106,199,189,0.28); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(106,199,189,0.22); }
     .spm-act-dark { background: rgba(255,255,255,0.07); color: white; font-size: 15px; border-color: rgba(255,255,255,0.1); padding: 7px 10px; }
     .spm-act-dark:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px) rotate(20deg); }
     .spm-hamburger {
@@ -102,7 +103,7 @@
     .spm-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .spm-mobile-overlay {
       position: fixed; inset: 0; z-index: 999;
-      background: rgba(7,14,40,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      background: rgba(20,40,38,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
     }
@@ -130,18 +131,18 @@
     .spm-mobile-overlay.open .spm-mob-link:nth-child(4) { transition-delay: 0.24s; }
     .spm-mobile-overlay.open .spm-mob-link:nth-child(5) { transition-delay: 0.30s; }
     .spm-mob-link:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(-4px); }
-    .spm-mob-link.active { background: rgba(0,201,177,0.12); border-color: rgba(0,201,177,0.25); color: #00C9B1; }
+    .spm-mob-link.active { background: rgba(106,199,189,0.12); border-color: rgba(106,199,189,0.25); color: #6ac7bd; }
     /* Student list FAB on mobile */
     .stu-fab {
       display: none; position: fixed; bottom: 88px; right: 20px; z-index: 490;
       width: 48px; height: 48px; border-radius: 50%;
       background: var(--primary); color: white; font-size: 20px;
       border: 2px solid rgba(255,255,255,0.2);
-      box-shadow: 0 4px 18px rgba(13,27,94,0.5);
+      box-shadow: 0 4px 18px rgba(60,121,116,0.5);
       cursor: pointer; align-items: center; justify-content: center;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .stu-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(13,27,94,0.7); }
+    .stu-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(60,121,116,0.7); }
 
     /* ══════════════════════════════════════════
        DARK MODE — Comprehensive Theme
@@ -268,7 +269,7 @@
 
     /* ── Filter buttons in sidebar ── */
     body.dark .filter-btn         { color: rgba(255,255,255,0.6) !important; }
-    body.dark .filter-btn.active  { background: var(--accent) !important; color: #0D1B5E !important; }
+    body.dark .filter-btn.active  { background: var(--accent) !important; color: #3c7974 !important; }
 
     /* ── Message type buttons ── */
     body.dark .msg-type-btn       { background: #1e293b !important; border-color: #334155 !important; color: #94a3b8 !important; }
@@ -414,7 +415,7 @@
       cursor: pointer; transition: all 0.18s; font-family: inherit; white-space: nowrap;
     }
     .filter-btn:hover { background: rgba(255,255,255,0.15); color: white; }
-    .filter-btn.active { background: var(--accent); color: #0D1B5E; border-color: var(--accent); }
+    .filter-btn.active { background: var(--accent); color: #3c7974; border-color: var(--accent); }
 
     /* ── What-If Slider ── */
     input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
@@ -602,10 +603,10 @@
         </a>
         <a id="studentPortalLink" href="student.html" target="_blank"
            style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
-                  background:rgba(0,201,177,0.15);color:#00C9B1;border:1px solid rgba(0,201,177,0.25);
+                  background:rgba(106,199,189,0.15);color:#6ac7bd;border:1px solid rgba(106,199,189,0.25);
                   font-size:12px;font-weight:700;text-decoration:none;transition:all 0.18s;"
-           onmouseover="this.style.background='rgba(0,201,177,0.25)'"
-           onmouseout="this.style.background='rgba(0,201,177,0.15)'">
+           onmouseover="this.style.background='rgba(106,199,189,0.25)'"
+           onmouseout="this.style.background='rgba(106,199,189,0.15)'">
           <span style="font-size:15px;">👤</span> بوابة الطالب
         </a>
         <a href="overview.html"
@@ -1179,7 +1180,7 @@ function renderMain(s) {
         <!-- Print button (desktop only) -->
         <button class="no-print stu-hdr-print" onclick="printReport()"
           style="padding:7px 14px;background:white;border:2px solid #E5E7EB;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:border-color 0.2s;"
-          onmouseover="this.style.borderColor='#0D1B5E'" onmouseout="this.style.borderColor='#E5E7EB'">
+          onmouseover="this.style.borderColor='#3c7974'" onmouseout="this.style.borderColor='#E5E7EB'">
           📤 طباعة
         </button>
       </div>
@@ -1191,7 +1192,7 @@ function renderMain(s) {
         <!-- Print button (mobile only) -->
         <button class="no-print stu-hdr-print-mob" onclick="printReport()"
           style="padding:5px 12px;background:white;border:2px solid #E5E7EB;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#374151;display:none;align-items:center;gap:4px;transition:border-color 0.2s;"
-          onmouseover="this.style.borderColor='#0D1B5E'" onmouseout="this.style.borderColor='#E5E7EB'">
+          onmouseover="this.style.borderColor='#3c7974'" onmouseout="this.style.borderColor='#E5E7EB'">
           📤 طباعة
         </button>
       </div>
@@ -1433,17 +1434,17 @@ ${generateMessage(s,'student')}</textarea>
             partPct,
             pct,
           ],
-          backgroundColor: 'rgba(13,27,94,0.12)',
-          borderColor: 'rgba(13,27,94,0.8)',
-          pointBackgroundColor: 'rgba(13,27,94,0.9)',
+          backgroundColor: 'rgba(60,121,116,0.12)',
+          borderColor: 'rgba(60,121,116,0.8)',
+          pointBackgroundColor: 'rgba(60,121,116,0.9)',
           pointRadius: 4,
           borderWidth: 2,
         },
         {
           label: 'متوسط الفصل',
           data: [classAvgPct, classAvgPct, classAvgPct, classAvgPct, classAvgPct, classAvgPct],
-          backgroundColor: 'rgba(0,201,177,0.06)',
-          borderColor: 'rgba(0,201,177,0.7)',
+          backgroundColor: 'rgba(106,199,189,0.06)',
+          borderColor: 'rgba(106,199,189,0.7)',
           borderDash: [4,4],
           pointRadius: 0,
           borderWidth: 1.5,

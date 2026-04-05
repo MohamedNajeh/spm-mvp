@@ -7,19 +7,20 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
-      --primary: #0D1B5E;
-      --accent:  #00C9B1;
+      --primary: #3c7974;
+      --accent:  #6ac7bd;
       --danger:  #EF4444;
       --warning: #F59E0B;
       --success: #10B981;
     }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F4F8; }
+    body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background: #f1f9f7; }
 
     /* ─── Login Screen ─── */
     #loginScreen {
       min-height: 100vh;
-      background: linear-gradient(135deg, #0D1B5E 0%, #1a3a8f 60%, #00C9B1 100%);
+      background: linear-gradient(135deg, #3c7974 0%, #4a9490 60%, #6ac7bd 100%);
       display: flex; align-items: center; justify-content: center;
     }
     .login-card {
@@ -37,7 +38,7 @@
       border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
       cursor: pointer; transition: background 0.2s; font-family: inherit;
     }
-    .login-btn:hover { background: #1a2d8f; }
+    .login-btn:hover { background: #6ac7bd; }
 
     /* ─── Dashboard ─── */
     #dashboard { display: none; }
@@ -47,26 +48,26 @@
       position: sticky; top: 0; z-index: 500;
       height: 62px; padding: 0 28px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(13,27,94,0.92);
+      background: rgba(60,121,116,0.92);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(255,255,255,0.07);
       animation: spmNavIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
       transition: background 0.3s, box-shadow 0.3s;
     }
-    .spm-nav.scrolled { background: rgba(13,27,94,0.98); box-shadow: 0 4px 32px rgba(0,0,0,0.4); }
+    .spm-nav.scrolled { background: rgba(60,121,116,0.98); box-shadow: 0 4px 32px rgba(0,0,0,0.4); }
     @keyframes spmNavIn {
       from { transform: translateY(-100%); opacity: 0; }
       to   { transform: translateY(0); opacity: 1; }
     }
     .spm-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; flex-shrink: 0; }
     .spm-logo {
-      background: linear-gradient(135deg,#00C9B1,#00b0a0);
+      background: linear-gradient(135deg,#6ac7bd,#3c7974);
       border-radius: 10px; padding: 6px 11px;
-      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #0D1B5E;
-      box-shadow: 0 0 18px rgba(0,201,177,0.35);
+      font-weight: 900; font-size: 13px; letter-spacing: 1.5px; color: #3c7974;
+      box-shadow: 0 0 18px rgba(106,199,189,0.35);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .spm-brand:hover .spm-logo { transform: scale(1.1) rotate(-3deg); box-shadow: 0 0 28px rgba(0,201,177,0.65); }
+    .spm-brand:hover .spm-logo { transform: scale(1.1) rotate(-3deg); box-shadow: 0 0 28px rgba(106,199,189,0.65); }
     .spm-brand-text { display: flex; flex-direction: column; }
     .spm-brand-name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
     .spm-brand-sub  { font-size: 10px; opacity: 0.4; }
@@ -109,7 +110,7 @@
     .spm-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .spm-mobile-overlay {
       position: fixed; inset: 0; z-index: 999;
-      background: rgba(7,14,40,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      background: rgba(20,40,38,0.97); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none; transition: opacity 0.32s ease;
     }
@@ -136,7 +137,7 @@
     .spm-mobile-overlay.open .spm-mob-link:nth-child(4) { transition-delay: 0.24s; }
     .spm-mobile-overlay.open .spm-mob-link:nth-child(5) { transition-delay: 0.30s; }
     .spm-mob-link:hover { background: rgba(255,255,255,0.1); color: white; transform: translateX(-4px); }
-    .spm-mob-link.active { background: rgba(0,201,177,0.12); border-color: rgba(0,201,177,0.25); color: #00C9B1; }
+    .spm-mob-link.active { background: rgba(106,199,189,0.12); border-color: rgba(106,199,189,0.25); color: #6ac7bd; }
     @media (max-width: 768px) {
       .spm-nav { padding: 0 14px !important; }
       .spm-pill-track { display: none; }
@@ -202,7 +203,7 @@
 
     /* Motivational banner */
     .motivation-banner {
-      background: linear-gradient(135deg, #0D1B5E, #1a3a8f);
+      background: linear-gradient(135deg, #3c7974, #4a9490);
       color: white; border-radius: 14px; padding: 20px 24px;
       display: flex; align-items: center; gap: 16px;
     }
@@ -259,8 +260,8 @@
   <div class="login-card">
     <!-- Logo -->
     <div style="text-align:center;margin-bottom:28px;">
-      <div style="display:inline-flex;align-items:center;gap:10px;background:#0D1B5E;padding:10px 20px;border-radius:12px;">
-        <span style="color:#00C9B1;font-weight:900;font-size:18px;letter-spacing:2px;">SPM</span>
+      <div style="display:inline-flex;align-items:center;gap:10px;background:#3c7974;padding:10px 20px;border-radius:12px;">
+        <span style="color:#6ac7bd;font-weight:900;font-size:18px;letter-spacing:2px;">SPM</span>
         <span style="color:white;font-size:13px;">خارطة الأداء الذكية</span>
       </div>
       <div style="margin-top:16px;font-size:22px;font-weight:800;color:#111827;">بوابة الطالب</div>
@@ -593,7 +594,7 @@ function renderStudentDashboard(s){
         <div style="font-size:11px;color:#6B7280;margin-top:2px;">مؤشر التعثر</div>
       </div>
       <div class="stat-card">
-        <div style="font-size:32px;font-weight:900;color:#0D1B5E;">${s.grades.participation.score}/${s.grades.participation.max}</div>
+        <div style="font-size:32px;font-weight:900;color:#3c7974;">${s.grades.participation.score}/${s.grades.participation.max}</div>
         <div style="font-size:12px;color:#6B7280;margin-top:4px;">المشاركة</div>
       </div>
     </div>
