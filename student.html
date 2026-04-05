@@ -249,6 +249,27 @@
       }
       .login-card { padding: 24px 16px !important; }
     }
+
+    /* ── Quiz Styles ── */
+    .q-opt {
+      width: 100%; padding: 12px 16px; border-radius: 10px;
+      border: 2px solid #E5E7EB; background: white; cursor: pointer;
+      text-align: right; font-size: 14px; font-family: inherit; color: #374151;
+      transition: border-color 0.18s, background 0.18s;
+      display: block; margin-bottom: 9px; line-height: 1.5;
+    }
+    .q-opt:hover:not([disabled]) { border-color: var(--accent); background: #f0fdfb; }
+    .q-opt.chosen   { border-color: var(--primary); background: #e6f4f3; font-weight: 600; color: #111827; }
+    .q-opt.correct  { border-color: #10B981 !important; background: #D1FAE5 !important; }
+    .q-opt.wrong    { border-color: #EF4444 !important; background: #FEE2E2 !important; }
+    .q-opt[disabled]{ cursor: default; }
+    .quiz-bar { height: 8px; background: #E5E7EB; border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+    .quiz-bar-fill { height: 100%; background: var(--primary); border-radius: 999px; transition: width 0.4s; }
+    .skill-badge-q { font-size: 11px; font-weight: 700; padding: 3px 10px; background: var(--accent); color: white; border-radius: 999px; }
+    .q-nav-btn {
+      padding: 9px 20px; border-radius: 10px; font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.18s;
+    }
   </style>
 </head>
 <body>
@@ -699,7 +720,59 @@ function renderStudentDashboard(s){
         </div>
       </div>
     </div>
+
+    <!-- ════════ اختبار الجاهزية ════════ -->
+    <div style="background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:24px;margin-top:20px;">
+
+      <!-- Intro -->
+      <div id="quizIntro">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="font-size:30px;">🎯</div>
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#111827;">تدرب على اختبار الجاهزية</div>
+            <div style="font-size:12px;color:#6B7280;margin-top:2px;">10 أسئلة • 4 محاور أكاديمية • نتائج فورية وتوصيات مخصصة</div>
+          </div>
+        </div>
+        <div id="prevResultBanner"></div>
+        <div style="background:#f1f9f7;border-radius:10px;padding:13px;margin-bottom:14px;font-size:13px;color:#374151;line-height:1.75;border-right:3px solid var(--accent);">
+          يقيس هذا الاختبار جاهزيتك في: <strong>الفهم، التحليل، التطبيق، الكتابة</strong>.
+          بعد الانتهاء ستحصل على تقرير مفصل بنقاط القوة والضعف مع خطة تحسين، وتُشارك نتيجتك تلقائياً مع مرشدك الأكاديمي.
+        </div>
+        <button onclick="startQuiz()"
+          style="width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;"
+          onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+          🚀 ابدأ الاختبار
+        </button>
+      </div>
+
+      <!-- Active Quiz -->
+      <div id="quizActive" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span id="qNum" style="font-size:13px;font-weight:600;color:#374151;"></span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="qSkill" class="skill-badge-q"></span>
+            <span id="qTimer" style="font-size:14px;font-weight:700;color:#EF4444;min-width:40px;text-align:center;">10:00</span>
+          </div>
+        </div>
+        <div class="quiz-bar"><div id="qBar" class="quiz-bar-fill" style="width:0%;"></div></div>
+        <div id="qText" style="font-size:15px;font-weight:700;color:#111827;margin-bottom:16px;line-height:1.65;"></div>
+        <div id="qOptions"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button onclick="prevQ()" id="qPrevBtn" class="q-nav-btn"
+            style="border:2px solid #E5E7EB;background:white;color:#374151;">→ السابق</button>
+          <button onclick="nextQ()" id="qNextBtn" class="q-nav-btn"
+            style="border:none;background:var(--primary);color:white;opacity:0.4;" disabled>التالي ←</button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="quizResultsDiv" style="display:none;"></div>
+    </div>
   `;
+
+  // ── Init quiz for this student ──
+  currentStudent = s;
+  initQuizSection(s);
 
   // ── Progress Chart ──
   if(activeChart){ activeChart.destroy(); }
@@ -741,6 +814,257 @@ function renderStudentDashboard(s){
       }
     }
   });
+}
+
+// ════════════════════════════════════════════════════════
+// QUIZ SYSTEM — تدرب على اختبار الجاهزية
+// ════════════════════════════════════════════════════════
+
+let currentStudent = null;
+let quizState      = null;  // { questions, answers, currentIdx }
+let quizTimerInt   = null;
+let quizTimerVal   = 0;
+
+// ── Question bank (20 questions across 4 skills) ──
+const QUIZ_BANK = [
+  // فهم
+  { skill:'فهم', q:'ما المقصود بـ"التفكير الناقد" في السياق الأكاديمي؟', opts:['قبول المعلومات كما هي دون تشكيك','تحليل وتقييم المعلومات بمنهجية قبل قبولها أو رفضها','رفض جميع الأفكار الجديدة','الحفظ والتكرار المستمر'], ans:1, exp:'التفكير الناقد هو تقييم الأفكار بموضوعية وليس قبولها أو رفضها تلقائياً.' },
+  { skill:'فهم', q:'ما الفرق بين "المفهوم" و"المصطلح"؟', opts:['المفهوم هو الفكرة الكاملة والمصطلح هو الكلمة التي تُسمّيها','لا فرق بينهما إطلاقاً','المصطلح أشمل وأعمق من المفهوم','المفهوم يُستخدم في العلوم الطبيعية فقط'], ans:0, exp:'المفهوم = الفكرة الذهنية، المصطلح = الكلمة أو الرمز المستخدم للتعبير عنها.' },
+  { skill:'فهم', q:'ما وظيفة الملخص (Abstract) في الورقة البحثية؟', opts:['استعراض كل المصادر المستخدمة','كتابة نتائج البحث فقط','تقديم نظرة موجزة وشاملة عن البحث كاملاً','ذكر قائمة المراجع فقط'], ans:2, exp:'الملخص يمنح القارئ صورة سريعة وشاملة عن البحث وأهدافه ونتائجه.' },
+  { skill:'فهم', q:'أي من الآتي يُعد مثالاً صحيحاً على "التعلم النشط"؟', opts:['الاستماع للمحاضرة دون مشاركة','نسخ الملاحظات من السبورة فقط','قراءة الكتاب قبل النوم','النقاش مع الزملاء وتطبيق المفاهيم على حالات حقيقية'], ans:3, exp:'التعلم النشط = المشاركة الفعلية في بناء المعرفة من خلال التفاعل والتطبيق.' },
+  { skill:'فهم', q:'ما المقصود بـ"الاستيعاب القرائي"؟', opts:['سرعة القراءة وإنجاز الصفحات','فهم المعنى واستخلاص الأفكار الرئيسية من النص','حفظ فقرات من النص عن ظهر قلب','ترجمة النص إلى لغة أخرى'], ans:1, exp:'الاستيعاب القرائي = الفهم العميق مع القدرة على استخلاص الأفكار الرئيسية.' },
+  // تحليل
+  { skill:'تحليل', q:'البيانات التالية تمثل درجات طالب: [55، 60، 58، 72، 80]. ما الاستنتاج الصحيح؟', opts:['الأداء ثابت تماماً','هناك تحسن تدريجي في الأداء عبر الزمن','الأداء في تراجع مستمر','لا يمكن الاستنتاج من هذه البيانات'], ans:1, exp:'الأرقام تتصاعد من 55 إلى 80 مما يدل على تحسن واضح عبر الزمن.' },
+  { skill:'تحليل', q:'حصل طالب على 60% في أعمال السنة (وزن 50%) ويُتوقع 70% في النهائي (وزن 50%). ما درجته الكلية؟', opts:['60%','55%','70%','65%'], ans:3, exp:'(60 × 0.5) + (70 × 0.5) = 30 + 35 = 65%' },
+  { skill:'تحليل', q:'ما المتغير المستقل في: "دراسة تأثير ساعات النوم على التحصيل الدراسي"؟', opts:['ساعات النوم','التحصيل الدراسي','المعدل التراكمي','عدد المواد الدراسية'], ans:0, exp:'المتغير المستقل هو السبب — وهنا ساعات النوم التي تؤثر في التحصيل.' },
+  { skill:'تحليل', q:'إذا كانت نسبة حضور طالب 35% فقط، ما الاستنتاج الأدق؟', opts:['يعتمد على الدراسة الذاتية','يحتاج تحسيناً بسيطاً','الحضور لا يؤثر على الأداء','الطالب في خطر تعثر ويحتاج تدخلاً عاجلاً'], ans:3, exp:'35% حضور يشير بوضوح إلى خطر تعثر أكاديمي حقيقي يستوجب التدخل.' },
+  { skill:'تحليل', q:'ما المتوسط الحسابي للمجموعة: [85، 60، 45، 90، 70]؟', opts:['65','75','70','80'], ans:2, exp:'مجموع الأرقام = 350 ÷ 5 = 70.' },
+  // تطبيق
+  { skill:'تطبيق', q:'طالب يريد رفع معدله من 2.5 إلى 3.0. ما أفضل خطوة عملية أولى؟', opts:['تقليل عدد المواد والانتظار','الاعتماد على ملاحظات الزملاء فقط','وضع خطة دراسية أسبوعية محددة مع تحديد الأولويات','تأجيل الجهد حتى قرب الاختبارات'], ans:2, exp:'الخطة الدراسية المنظمة هي الأساس لتحسين الأداء بشكل مستدام.' },
+  { skill:'تطبيق', q:'ما أفضل أسلوب لمراجعة مادة قبل الاختبار بأسبوع؟', opts:['تلخيص المحاور وحل أسئلة سابقة مع التركيز على الصعاب','قراءة الكتاب كاملاً من البداية كل يوم','الدراسة ليلة الاختبار فقط','مشاهدة الشروحات دون ممارسة وحل'], ans:0, exp:'الجمع بين التلخيص وحل الأسئلة ومراجعة الصعاب هو الأسلوب الأكثر فاعلية.' },
+  { skill:'تطبيق', q:'طالب يجد صعوبة في مادة تحليلية. ما التصرف الأمثل؟', opts:['الاعتماد على غيره لحل الواجبات','تجاهل المادة وانتظار النهائي','الدراسة ليلة الاختبار فقط','حضور ساعات المكتب وحل تمارين إضافية بانتظام'], ans:3, exp:'التواصل مع الأستاذ والممارسة المنتظمة هما أفضل طريقة لتجاوز الصعوبة.' },
+  { skill:'تطبيق', q:'كيف تستعد بفاعلية لتقديم عرض أكاديمي أمام الفصل؟', opts:['الارتجال التام دون تحضير','التحضير المسبق والتدرب على العرض وتنظيم الأفكار بوضوح','قراءة الشرائح مباشرة دون تفاعل','الاعتماد على زميل للحديث عنك'], ans:1, exp:'التحضير والتدرب مسبقاً يضمنان تقديماً واثقاً ومنظماً.' },
+  { skill:'تطبيق', q:'ما أفضل استخدام لـ"خارطة الذهن" في الدراسة؟', opts:['حل المسائل الرياضية المعقدة','كتابة ملاحظات خطية مطولة','تنظيم الأفكار وربط المفاهيم بصورة مرئية لتسهيل الفهم','استبدال قراءة الكتاب المقرر كلياً'], ans:2, exp:'خارطة الذهن أداة مرئية رائعة لربط المفاهيم وتنظيم الأفكار وتسهيل المراجعة.' },
+  // كتابة
+  { skill:'كتابة', q:'ما عناصر التقرير الأكاديمي الجيد بترتيبها الصحيح؟', opts:['العنوان والخاتمة فقط','مقدمة ثم منهجية ثم نتائج ثم مناقشة ثم خاتمة ثم مراجع','ملاحظات الشرح فقط','العنوان والمراجع دون محتوى'], ans:1, exp:'هذا هو الترتيب المنطقي المعتمد للتقرير الأكاديمي.' },
+  { skill:'كتابة', q:'أي الجمل أكثر ملاءمة للكتابة الأكاديمية الرسمية؟', opts:['"الأمور تحتاج تحسين واضح"','"المشكلة موجودة لكن ما في حل"','"تواجه هذه الشريحة تحديات في الاستيعاب مما يستوجب تدخلاً تعليمياً موجهاً"','"كل الطلاب يعانون من نفس الشيء"'], ans:2, exp:'الكتابة الأكاديمية تتسم بالدقة والرسمية والموضوعية والوضوح.' },
+  { skill:'كتابة', q:'ما الهدف الأساسي من الاستشهاد بالمصادر أكاديمياً؟', opts:['إطالة حجم التقرير','توثيق المعلومات والاعتراف بأصحابها وتجنب الانتحال العلمي','تعقيد القراءة على القارئ','إظهار كمية ما قرأته فقط'], ans:1, exp:'التوثيق يحمي حقوق الملكية الفكرية ويعزز مصداقية الكتابة.' },
+  { skill:'كتابة', q:'أي من الآتي يُعد انتحالاً علمياً؟', opts:['إعادة صياغة فكرة بأسلوبك مع ذكر المصدر','الاستشهاد بنص مع ذكر المصدر بشكل صحيح','نسخ فقرة من مرجع دون الإشارة إليه','ذكر اسم المؤلف والسنة في المتن'], ans:2, exp:'الانتحال = استخدام أفكار أو نصوص الآخرين دون الاعتراف بها.' },
+  { skill:'كتابة', q:'ما خصائص الكتابة الأكاديمية الجيدة؟', opts:['الوضوح والدقة والموضوعية والاستناد لمصادر موثوقة','اللغة العامية والأسلوب الشخصي العاطفي','الإسهاب والتكرار لملء الصفحات','العبارات الدارجة وغير الرسمية'], ans:0, exp:'الكتابة الأكاديمية الجيدة: وضوح + دقة + موضوعية + توثيق.' },
+];
+
+const QUIZ_RECS = {
+  'فهم':    ['اقرأ المصادر الأصلية وليس الملخصات فقط','استخدم تقنية Feynman: اشرح المفهوم بكلماتك البسيطة','خصص 30 دقيقة يومياً للقراءة النقدية التأملية'],
+  'تحليل':  ['حل 5 تمارين تحليلية يومياً بانتظام','استخدم الجداول والمخططات لتنظيم البيانات وتحليلها','احضر ساعات مكتب الأستاذ للمواد الأصعب عليك'],
+  'تطبيق':  ['طبّق المفاهيم على مشاريع تطبيقية صغيرة يومياً','حل أسئلة الاختبارات السابقة بانتظام ومراجعة الأخطاء','كوّن مجموعة دراسية للتدريب المشترك وتبادل الشرح'],
+  'كتابة':  ['اكتب ملخصاً يومياً لما تعلمته بأسلوبك الخاص','اطلب تغذية راجعة على تقاريرك من أستاذك','راجع دليل أسس الكتابة الأكاديمية والتوثيق العلمي'],
+};
+
+function initQuizSection(s) {
+  const prev = JSON.parse(localStorage.getItem('spm_quiz_' + s.id) || 'null');
+  const banner = document.getElementById('prevResultBanner');
+  if (!prev || !banner) return;
+  const col = prev.score >= 80 ? '#10B981' : prev.score >= 60 ? '#F59E0B' : '#EF4444';
+  banner.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;background:${col}12;border:1px solid ${col}35;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:${col};">آخر نتيجة: ${prev.score}% — ${prev.date}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px;">يمكنك إعادة الاختبار لتتبع تحسنك</div>
+      </div>
+      <div style="font-size:26px;font-weight:900;color:${col};">${prev.score}%</div>
+    </div>`;
+}
+
+function startQuiz() {
+  // Select 10 questions: 2-3 from each skill area
+  const bySkill = {};
+  QUIZ_BANK.forEach(q => { if (!bySkill[q.skill]) bySkill[q.skill] = []; bySkill[q.skill].push(q); });
+  let selected = [];
+  Object.values(bySkill).forEach(qs => {
+    const shuffled = [...qs].sort(() => Math.random() - 0.5);
+    selected.push(shuffled[0], shuffled[1]);  // 2 per skill = 8
+  });
+  // Add 2 random from remaining
+  const remaining = QUIZ_BANK.filter(q => !selected.includes(q)).sort(() => Math.random() - 0.5);
+  selected.push(...remaining.slice(0, 2));
+  selected = selected.sort(() => Math.random() - 0.5);
+
+  quizState = { questions: selected, answers: new Array(selected.length).fill(null), currentIdx: 0 };
+  quizTimerVal = 600;
+  quizTimerInt = setInterval(tickQuizTimer, 1000);
+
+  document.getElementById('quizIntro').style.display  = 'none';
+  document.getElementById('quizActive').style.display = 'block';
+  renderQuestion(0);
+}
+
+function tickQuizTimer() {
+  quizTimerVal--;
+  const m = Math.floor(quizTimerVal / 60);
+  const s = quizTimerVal % 60;
+  const el = document.getElementById('qTimer');
+  if (el) el.textContent = m + ':' + String(s).padStart(2, '0');
+  if (el) el.style.color = quizTimerVal <= 60 ? '#EF4444' : '#374151';
+  if (quizTimerVal <= 0) { clearInterval(quizTimerInt); submitQuiz(); }
+}
+
+function renderQuestion(idx) {
+  const q = quizState.questions[idx];
+  const total = quizState.questions.length;
+  document.getElementById('qNum').textContent  = 'السؤال ' + (idx + 1) + ' من ' + total;
+  document.getElementById('qSkill').textContent = q.skill;
+  document.getElementById('qText').textContent  = q.q;
+  document.getElementById('qBar').style.width   = (idx / total * 100) + '%';
+
+  const chosen = quizState.answers[idx];
+  document.getElementById('qOptions').innerHTML = q.opts.map((opt, i) =>
+    `<button class="q-opt${chosen === i ? ' chosen' : ''}" onclick="selectOpt(${i})">${opt}</button>`
+  ).join('');
+
+  const nextBtn = document.getElementById('qNextBtn');
+  const prevBtn = document.getElementById('qPrevBtn');
+  nextBtn.disabled  = chosen === null;
+  nextBtn.style.opacity = chosen === null ? '0.4' : '1';
+  nextBtn.textContent   = idx === total - 1 ? 'إنهاء الاختبار ✅' : 'التالي ←';
+  prevBtn.disabled  = idx === 0;
+  prevBtn.style.opacity = idx === 0 ? '0.4' : '1';
+}
+
+function selectOpt(i) {
+  quizState.answers[quizState.currentIdx] = i;
+  document.querySelectorAll('.q-opt').forEach((btn, bi) => {
+    btn.classList.toggle('chosen', bi === i);
+  });
+  const nextBtn = document.getElementById('qNextBtn');
+  nextBtn.disabled = false;
+  nextBtn.style.opacity = '1';
+}
+
+function prevQ() {
+  if (quizState.currentIdx > 0) { quizState.currentIdx--; renderQuestion(quizState.currentIdx); }
+}
+
+function nextQ() {
+  if (quizState.answers[quizState.currentIdx] === null) return;
+  if (quizState.currentIdx === quizState.questions.length - 1) { submitQuiz(); return; }
+  quizState.currentIdx++;
+  renderQuestion(quizState.currentIdx);
+}
+
+function submitQuiz() {
+  clearInterval(quizTimerInt);
+  const { questions, answers } = quizState;
+  const skillC = {}, skillOK = {};
+  let correct = 0;
+  questions.forEach((q, i) => {
+    if (!skillC[q.skill])  { skillC[q.skill] = 0; skillOK[q.skill] = 0; }
+    skillC[q.skill]++;
+    if (answers[i] === q.ans) { correct++; skillOK[q.skill]++; }
+  });
+  const score = Math.round(correct / questions.length * 100);
+  const skillPcts = {};
+  Object.keys(skillC).forEach(k => { skillPcts[k] = Math.round(skillOK[k] / skillC[k] * 100); });
+  const weakAreas = Object.entries(skillPcts).filter(([,v]) => v < 70).sort((a,b) => a[1]-b[1]).map(([k]) => k);
+
+  const result = {
+    studentId: currentStudent.id, studentName: currentStudent.name,
+    date: new Date().toLocaleDateString('ar-SA'),
+    score, correct, total: questions.length, skillPcts, weakAreas,
+  };
+  localStorage.setItem('spm_quiz_' + currentStudent.id, JSON.stringify(result));
+  // Global list for advisor
+  let all = JSON.parse(localStorage.getItem('spm_all_quiz_results') || '[]');
+  all = all.filter(r => r.studentId !== currentStudent.id);
+  all.unshift(result);
+  localStorage.setItem('spm_all_quiz_results', JSON.stringify(all));
+
+  showQuizResults(result);
+}
+
+function showQuizResults(result) {
+  document.getElementById('quizActive').style.display = 'none';
+  const div = document.getElementById('quizResultsDiv');
+  div.style.display = 'block';
+
+  const levels = [
+    { min:80, label:'جاهز للاختبار 🎉',       col:'#10B981', msg:'أنت جاهز! يمكنك تقديم الاختبار الآن.',                              wks:0 },
+    { min:60, label:'قريب من الجاهزية ⚡',      col:'#F59E0B', msg:'تحتاج 1–2 أسبوع للتركيز على النقاط الضعيفة.',                    wks:2 },
+    { min:40, label:'بحاجة لتحضير إضافي 📚',   col:'#F97316', msg:'يُنصح بمراجعة شاملة للمحاور الضعيفة لمدة 3–4 أسابيع.',           wks:4 },
+    { min:0,  label:'تحتاج دعماً أكاديمياً 🤝', col:'#EF4444', msg:'يُنصح بزيارة مرشدك الأكاديمي وإعداد خطة دراسية مكثفة (4–6 أسابيع).', wks:6 },
+  ];
+  const lv = levels.find(l => result.score >= l.min);
+
+  div.innerHTML = `
+    <div style="text-align:center;padding:24px;background:linear-gradient(135deg,${lv.col}18,${lv.col}06);border-radius:14px;margin-bottom:20px;border:2px solid ${lv.col}30;">
+      <div style="font-size:54px;font-weight:900;color:${lv.col};line-height:1;">${result.score}%</div>
+      <div style="font-size:17px;font-weight:700;color:${lv.col};margin:8px 0;">${lv.label}</div>
+      <div style="font-size:13px;color:#6B7280;">${result.correct} من ${result.total} إجابة صحيحة</div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;">📊 النتيجة حسب المهارة</div>
+      ${Object.entries(result.skillPcts).map(([sk,pct]) => `
+        <div style="margin-bottom:11px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px;">
+            <span>${sk}</span><span style="color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</span>
+          </div>
+          <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%;background:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};"></div></div>
+        </div>`).join('')}
+    </div>
+
+    ${result.weakAreas.length ? `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:10px;">💡 نقاط تحتاج تقوية وطرق تحسينها</div>
+      ${result.weakAreas.slice(0,2).map(area => `
+        <div style="background:#FFFBEB;border-right:3px solid #F59E0B;border-radius:10px;padding:14px;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:8px;">⚡ مهارة ${area} — ${result.skillPcts[area]}%</div>
+          ${(QUIZ_RECS[area]||[]).map(t=>`<div style="font-size:12px;color:#78350F;padding:2px 0;">• ${t}</div>`).join('')}
+        </div>`).join('')}
+    </div>` : ''}
+
+    <div style="background:#EFF6FF;border-right:3px solid #3B82F6;border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:4px;">🗓️ توصية موعد الاختبار الفعلي</div>
+      <div style="font-size:13px;color:#1E40AF;">${lv.msg}</div>
+      ${lv.wks ? `<div style="font-size:12px;color:#3B82F6;margin-top:4px;font-weight:600;">الوقت المقترح: ${lv.wks} أسابيع من الآن</div>` : ''}
+    </div>
+
+    <div style="background:#F0FDF4;border-right:3px solid #10B981;border-radius:10px;padding:12px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#065F46;margin-bottom:2px;">📨 تمت مشاركة نتيجتك مع مرشدك الأكاديمي</div>
+      <div style="font-size:12px;color:#047857;">سيتمكن مرشدك من مشاهدة نتيجتك ومتابعة تطورك في لوحة التحكم.</div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="retakeQuiz()" style="flex:1;min-width:130px;padding:11px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 إعادة الاختبار</button>
+      <button onclick="toggleReview(this)" style="flex:1;min-width:130px;padding:11px;background:white;border:2px solid #E5E7EB;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#374151;">📋 مراجعة الإجابات</button>
+    </div>
+    <div id="reviewDiv" style="display:none;margin-top:18px;"></div>
+  `;
+}
+
+function retakeQuiz() {
+  document.getElementById('quizResultsDiv').style.display = 'none';
+  document.getElementById('quizIntro').style.display = 'block';
+  initQuizSection(currentStudent);
+}
+
+function toggleReview(btn) {
+  const div = document.getElementById('reviewDiv');
+  if (div.style.display === 'block') { div.style.display = 'none'; btn.textContent = '📋 مراجعة الإجابات'; return; }
+  btn.textContent = '▲ إخفاء المراجعة';
+  const { questions, answers } = quizState;
+  div.innerHTML = `
+    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;">📋 مراجعة الإجابات</div>
+    ${questions.map((q,i) => {
+      const ua = answers[i]; const ok = ua === q.ans;
+      return `<div style="border:2px solid ${ok?'#10B981':'#EF4444'};border-radius:10px;padding:14px;margin-bottom:10px;background:${ok?'#F0FDF4':'#FFF5F5'};">
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:4px;">${i+1}. ${q.skill} ${ok?'✅':'❌'}</div>
+        <div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:8px;">${q.q}</div>
+        ${ua !== null && !ok ? `<div style="font-size:12px;color:#EF4444;margin-bottom:4px;">إجابتك: ${q.opts[ua]}</div>` : ''}
+        <div style="font-size:12px;color:#10B981;margin-bottom:6px;">✓ الصحيحة: ${q.opts[q.ans]}</div>
+        <div style="font-size:11px;color:#6B7280;background:white;padding:8px;border-radius:6px;line-height:1.6;">💡 ${q.exp}</div>
+      </div>`;
+    }).join('')}`;
+  div.style.display = 'block';
 }
 
 // Also support ?id= param for direct link from advisor dashboard

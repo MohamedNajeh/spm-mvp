@@ -1410,6 +1410,64 @@ ${generateMessage(s,'student')}</textarea>
         <div id="intList">${renderIntList(s.id)}</div>
       </div>
     </div>
+
+    <!-- Row 6: Quiz Results from Student Self-Assessment -->
+    <div id="quizAdvisorCard" style="margin-top:20px;">
+      ${(()=>{
+        const qr = (() => { try { const d = localStorage.getItem('spm_quiz_'+s.id); return d ? JSON.parse(d) : null; } catch(e){ return null; } })();
+        if (!qr) return `
+          <div class="card" style="padding:20px;border:2px dashed #D1FAE5;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+              <span style="font-size:20px;">📝</span>
+              <div style="font-size:14px;font-weight:700;color:#111827;">اختبار الجاهزية — تقييم الطالب الذاتي</div>
+              <span style="margin-right:auto;font-size:11px;color:#9CA3AF;background:#F3F4F6;padding:3px 10px;border-radius:999px;">لم يُجرَ الاختبار بعد</span>
+            </div>
+            <div style="font-size:12px;color:#6B7280;">لم يُكمل الطالب اختبار الجاهزية الذاتي بعد. سيظهر هنا تلقائياً بمجرد إجراء الاختبار.</div>
+          </div>`;
+        const scoreColor = qr.score >= 70 ? '#10B981' : qr.score >= 50 ? '#F59E0B' : '#EF4444';
+        const scoreLabel = qr.score >= 70 ? 'جيد' : qr.score >= 50 ? 'متوسط' : 'يحتاج دعم';
+        const dateStr = qr.date ? new Date(qr.date).toLocaleDateString('ar-SA', {year:'numeric',month:'short',day:'numeric'}) : '';
+        const skillRows = Object.entries(qr.skillScores||{}).map(([sk,sc])=>{
+          const c = sc>=70?'#10B981':sc>=50?'#F59E0B':'#EF4444';
+          return `<div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
+              <span style="color:#374151;font-weight:600;">${sk}</span>
+              <span style="color:${c};font-weight:700;">${sc}%</span>
+            </div>
+            <div style="height:6px;background:#E5E7EB;border-radius:999px;overflow:hidden;">
+              <div style="height:100%;width:${sc}%;background:${c};border-radius:999px;"></div>
+            </div>
+          </div>`;
+        }).join('');
+        const weakAreas = Object.entries(qr.skillScores||{}).filter(([,sc])=>sc<60).map(([sk])=>sk);
+        return `
+          <div class="card" style="padding:20px;border-right:4px solid ${scoreColor};">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+              <span style="font-size:20px;">📝</span>
+              <div style="font-size:14px;font-weight:700;color:#111827;">اختبار الجاهزية — تقييم الطالب الذاتي</div>
+              <span style="font-size:11px;color:#6B7280;margin-right:auto;">${dateStr}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;">
+              <!-- Score Gauge -->
+              <div style="text-align:center;min-width:90px;">
+                <div style="width:80px;height:80px;border-radius:50%;border:6px solid ${scoreColor};display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 6px;">
+                  <div style="font-size:22px;font-weight:800;color:${scoreColor};">${qr.score}%</div>
+                </div>
+                <div style="font-size:12px;font-weight:700;color:${scoreColor};">${scoreLabel}</div>
+                <div style="font-size:10px;color:#9CA3AF;margin-top:2px;">${qr.correct||0}/${qr.total||10} صحيح</div>
+              </div>
+              <!-- Skill Breakdown -->
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;">تفصيل المهارات:</div>
+                ${skillRows}
+                ${weakAreas.length ? `<div style="margin-top:10px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:11px;color:#92400E;">
+                  ⚠️ مجالات تحتاج اهتماماً: <strong>${weakAreas.join(' • ')}</strong>
+                </div>` : `<div style="margin-top:10px;padding:8px 12px;background:#D1FAE5;border-radius:8px;font-size:11px;color:#065F46;">✅ الطالب على مستوى جيد في جميع المهارات</div>`}
+              </div>
+            </div>
+          </div>`;
+      })()}
+    </div>
   `;
 
   // ---- CHARTS ----
