@@ -1670,51 +1670,51 @@ function showTourStep() {
 }
 
 function positionTourBox(target) {
-  const box    = document.getElementById('tourBox');
-  const margin = 16;
-  const gap    = 14; // space between element edge and box
+  const box = document.getElementById('tourBox');
+  if (!box.classList.contains('visible')) return;
+
+  const bh = box.offsetHeight;
+  // Box hasn't laid out yet — retry in 80ms
+  if (!bh) { setTimeout(() => positionTourBox(target), 80); return; }
+
+  const margin = 14;
+  const gap    = 12;
   const vw     = window.innerWidth;
   const vh     = window.innerHeight;
-  const bw     = box.offsetWidth  || 440;
-  const bh     = box.offsetHeight || 220;
+  const bw     = box.offsetWidth;
 
-  // Reset to compute cleanly
-  box.style.top       = '';
+  // Always clear bottom/transform so fixed top takes over
   box.style.bottom    = '';
-  box.style.left      = '';
   box.style.transform = '';
 
   if (!target) {
-    // Fallback: bottom-center
+    box.style.top  = '';
+    box.style.left = '50%';
     box.style.bottom    = margin + 'px';
-    box.style.left      = '50%';
     box.style.transform = 'translateX(-50%)';
     return;
   }
 
-  const rect = target.getBoundingClientRect();
+  const rect      = target.getBoundingClientRect();
+  const elCenterY = rect.top + rect.height / 2;
 
-  // ── Vertical: prefer below the element; flip above if no room ──
   let top;
-  const spaceBelow = vh - rect.bottom - margin;
-  const spaceAbove = rect.top - margin;
-  if (spaceBelow >= bh + gap) {
-    top = rect.bottom + gap;
-  } else if (spaceAbove >= bh + gap) {
+  // Element center in lower 55% of screen → prefer showing box ABOVE it
+  if (elCenterY > vh * 0.45) {
     top = rect.top - bh - gap;
   } else {
-    // Not enough room either side — center vertically in viewport
-    top = Math.max(margin, (vh - bh) / 2);
+    top = rect.bottom + gap;
   }
 
-  // ── Horizontal: center on element, clamp to viewport ──
+  // Hard-clamp: box must always stay fully inside viewport
+  top = Math.max(margin, Math.min(vh - bh - margin, top));
+
+  // Horizontal: center on element, hard-clamp to viewport
   let left = rect.left + rect.width / 2 - bw / 2;
   left = Math.max(margin, Math.min(vw - bw - margin, left));
 
-  box.style.top    = Math.round(top)  + 'px';
-  box.style.left   = Math.round(left) + 'px';
-  box.style.bottom = '';
-  box.style.transform = '';
+  box.style.top  = Math.round(top)  + 'px';
+  box.style.left = Math.round(left) + 'px';
 }
 
 function tourMove(dir) {
