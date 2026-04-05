@@ -282,14 +282,11 @@
     }
     #tourOverlay.active { background: rgba(0,0,0,0.58); pointer-events: all; }
 
-    /* Tour box — always fixed at bottom-center, always visible */
+    /* Tour box — positioned near highlighted element via JS */
     #tourBox {
       position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9200;          /* above overlay */
-      pointer-events: all;    /* always clickable */
+      z-index: 9200;
+      pointer-events: all;
       background: white;
       border-radius: 18px;
       padding: 22px 26px 18px;
@@ -297,6 +294,8 @@
       max-width: calc(100vw - 32px);
       box-shadow: 0 16px 56px rgba(0,0,0,0.38);
       display: none;
+      /* smooth position transitions between steps */
+      transition: top 0.3s cubic-bezier(0.4,0,0.2,1), left 0.3s cubic-bezier(0.4,0,0.2,1);
     }
     #tourBox.visible {
       display: block;
@@ -499,8 +498,8 @@
       /* ── Alert banner ── */
       #alertBanner { top: 62px; font-size: 11px; }
 
-      /* ── Tour box full width ── */
-      #tourBox { width: calc(100vw - 24px) !important; bottom: 14px; }
+      /* ── Tour box full width on mobile ── */
+      #tourBox { width: calc(100vw - 24px) !important; }
     }
 
     @media (max-width: 480px) {
@@ -1199,7 +1198,7 @@ function renderMain(s) {
     </div>
 
     <!-- Stats Row: 4 Smart KPI Cards -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+    <div id="kpiSection" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
 
       <!-- الأعمال الحالية -->
       <div class="card stat-mini" style="padding:16px;">
@@ -1236,7 +1235,7 @@ function renderMain(s) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
 
       <!-- Radar: Academic Fingerprint -->
-      <div class="card" style="padding:20px;">
+      <div class="card" id="radarSection" style="padding:20px;">
         <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🕸️ البصمة الأكاديمية</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">ملف الطالب على 6 محاور أكاديمية</div>
         <canvas id="radarChart" height="210"></canvas>
@@ -1329,7 +1328,7 @@ function renderMain(s) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
 
       <!-- 🎮 What-If Simulator -->
-      <div class="card" style="padding:20px;">
+      <div class="card" id="whatIfSection" style="padding:20px;">
         <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🎮 محاكي "ماذا لو؟"</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:16px;">حرّك الشريط لترى أثر الاختبار النهائي على الدرجة الكلية</div>
 
@@ -1360,7 +1359,7 @@ function renderMain(s) {
       </div>
 
       <!-- 📧 Smart Message Generator -->
-      <div class="card" style="padding:20px;">
+      <div class="card" id="msgSection" style="padding:20px;">
         <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">📧 مولّد الرسائل الذكية</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">رسالة رسمية جاهزة بناءً على بيانات الطالب</div>
 
@@ -1589,22 +1588,22 @@ const tourSteps = [
     text:   'ابحث بالاسم أو الرقم الجامعي، وفلتر حسب مستوى الخطر بضغطة واحدة. النقطة الملونة تعكس مؤشر الخطر لكل طالب.',
   },
   {
-    target: '#mainContent',
+    target: '#kpiSection',
     title:  'بطاقات الأداء الذكية 📊',
     text:   '٤ مؤشرات تُحلل الطالب فوراً: الأعمال الحالية، التوقع النهائي بخوارزمية ذكية، مقارنة بمتوسط الفصل، والترتيب.',
   },
   {
-    target: '#mainContent',
+    target: '#radarSection',
     title:  'البصمة الأكاديمية 🕸️',
     text:   'مخطط عنكبوتي يعرض الطالب على ٦ محاور دفعة واحدة مع خط متقطع يمثّل متوسط الفصل للمقارنة الفورية.',
   },
   {
-    target: '#mainContent',
+    target: '#whatIfSection',
     title:  'محاكي "ماذا لو؟" 🎮',
     text:   'حرّك الشريط لترى: إذا حصل الطالب على X% في الاختبار النهائي، كانت درجته الكلية Y%. تفاعلي ومباشر.',
   },
   {
-    target: '#mainContent',
+    target: '#msgSection',
     title:  'مولّد الرسائل الذكية 📧',
     text:   'رسالة رسمية جاهزة للطالب أو ولي أمره أو إحالة أكاديمية — تُبنى تلقائياً من بياناته. اضغط "نسخ" وأرسلها.',
   },
@@ -1641,7 +1640,6 @@ function showTourStep() {
   if (target) {
     target.classList.add('tour-highlight');
     tourHighlighted = target;
-    // Scroll target into view so the highlight ring is visible
     target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -1661,12 +1659,62 @@ function showTourStep() {
   prevBtn.style.visibility = tourIdx === 0 ? 'hidden' : 'visible';
   nextBtn.textContent = tourIdx === tourSteps.length - 1 ? '✅ إنهاء الجولة' : 'التالي ←';
 
-  // ── Show overlay + box ──
+  // ── Show overlay ──
   overlay.classList.add('active');
+
+  // ── Position box near the target after scroll settles ──
   box.classList.remove('visible');
-  // Force reflow so animation re-triggers on each step
   void box.offsetWidth;
   box.classList.add('visible');
+  setTimeout(() => positionTourBox(target), 380);
+}
+
+function positionTourBox(target) {
+  const box    = document.getElementById('tourBox');
+  const margin = 16;
+  const gap    = 14; // space between element edge and box
+  const vw     = window.innerWidth;
+  const vh     = window.innerHeight;
+  const bw     = box.offsetWidth  || 440;
+  const bh     = box.offsetHeight || 220;
+
+  // Reset to compute cleanly
+  box.style.top       = '';
+  box.style.bottom    = '';
+  box.style.left      = '';
+  box.style.transform = '';
+
+  if (!target) {
+    // Fallback: bottom-center
+    box.style.bottom    = margin + 'px';
+    box.style.left      = '50%';
+    box.style.transform = 'translateX(-50%)';
+    return;
+  }
+
+  const rect = target.getBoundingClientRect();
+
+  // ── Vertical: prefer below the element; flip above if no room ──
+  let top;
+  const spaceBelow = vh - rect.bottom - margin;
+  const spaceAbove = rect.top - margin;
+  if (spaceBelow >= bh + gap) {
+    top = rect.bottom + gap;
+  } else if (spaceAbove >= bh + gap) {
+    top = rect.top - bh - gap;
+  } else {
+    // Not enough room either side — center vertically in viewport
+    top = Math.max(margin, (vh - bh) / 2);
+  }
+
+  // ── Horizontal: center on element, clamp to viewport ──
+  let left = rect.left + rect.width / 2 - bw / 2;
+  left = Math.max(margin, Math.min(vw - bw - margin, left));
+
+  box.style.top    = Math.round(top)  + 'px';
+  box.style.left   = Math.round(left) + 'px';
+  box.style.bottom = '';
+  box.style.transform = '';
 }
 
 function tourMove(dir) {
