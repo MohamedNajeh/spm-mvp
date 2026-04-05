@@ -294,8 +294,6 @@
       max-width: calc(100vw - 32px);
       box-shadow: 0 16px 56px rgba(0,0,0,0.38);
       display: none;
-      /* smooth position transitions between steps */
-      transition: top 0.3s cubic-bezier(0.4,0,0.2,1), left 0.3s cubic-bezier(0.4,0,0.2,1);
     }
     #tourBox.visible {
       display: block;
@@ -1640,7 +1638,8 @@ function showTourStep() {
   if (target) {
     target.classList.add('tour-highlight');
     tourHighlighted = target;
-    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // instant scroll — no animation timing issue
+    target.scrollIntoView({ behavior: 'instant', block: 'center' });
   }
 
   // ── Update content ──
@@ -1662,36 +1661,32 @@ function showTourStep() {
   // ── Show overlay ──
   overlay.classList.add('active');
 
-  // ── Position box near the target after scroll settles ──
+  // ── Show box, then position after two rAF frames (guarantees layout is done) ──
   box.classList.remove('visible');
   void box.offsetWidth;
   box.classList.add('visible');
-  setTimeout(() => positionTourBox(target), 380);
+  requestAnimationFrame(() => requestAnimationFrame(() => positionTourBox(target)));
 }
 
 function positionTourBox(target) {
   const box = document.getElementById('tourBox');
   if (!box.classList.contains('visible')) return;
 
-  const bh = box.offsetHeight;
-  // Box hasn't laid out yet — retry in 80ms
-  if (!bh) { setTimeout(() => positionTourBox(target), 80); return; }
-
   const margin = 14;
   const gap    = 12;
+  const navH   = 62;
   const vw     = window.innerWidth;
   const vh     = window.innerHeight;
   const bw     = box.offsetWidth;
+  const bh     = box.offsetHeight;
 
-  // Always clear bottom/transform so fixed top takes over
   box.style.bottom    = '';
   box.style.transform = '';
 
-  if (!target) {
-    box.style.top  = '';
-    box.style.left = '50%';
-    box.style.bottom    = margin + 'px';
-    box.style.transform = 'translateX(-50%)';
+  if (!target || !bh) {
+    // Safe fallback: centered below nav
+    box.style.top  = (navH + margin) + 'px';
+    box.style.left = Math.max(margin, (vw - bw) / 2) + 'px';
     return;
   }
 
@@ -1699,17 +1694,17 @@ function positionTourBox(target) {
   const elCenterY = rect.top + rect.height / 2;
 
   let top;
-  // Element center in lower 55% of screen → prefer showing box ABOVE it
-  if (elCenterY > vh * 0.45) {
+  // Element center in lower half → show box ABOVE it; otherwise BELOW
+  if (elCenterY > vh * 0.5) {
     top = rect.top - bh - gap;
   } else {
     top = rect.bottom + gap;
   }
 
-  // Hard-clamp: box must always stay fully inside viewport
-  top = Math.max(margin, Math.min(vh - bh - margin, top));
+  // Hard-clamp: always fully inside viewport
+  top = Math.max(navH + margin, Math.min(vh - bh - margin, top));
 
-  // Horizontal: center on element, hard-clamp to viewport
+  // Horizontal: center on element, hard-clamp
   let left = rect.left + rect.width / 2 - bw / 2;
   left = Math.max(margin, Math.min(vw - bw - margin, left));
 
