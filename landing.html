@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SPM — خارطة الأداء الذكية</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
@@ -12,6 +13,9 @@
       --warning: #F59E0B; --success: #10B981;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
+    .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
     html { scroll-behavior: smooth; }
     body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: #111827; background: white; }
 
@@ -365,14 +369,14 @@
 <!-- ══════════ HERO ══════════ -->
 <section class="hero" style="max-width:100%;padding:0;">
   <div class="hero-content">
-    <div class="hero-badge fade-up">🚀 مشروع الهاكاثون — جامعة الأمير سطام بن عبدالعزيز</div>
+    <div class="hero-badge fade-up"><i class="bi bi-rocket-fill"></i> مشروع الهاكاثون — جامعة الأمير سطام بن عبدالعزيز</div>
     <h1 class="fade-up delay-1">اكشف التعثر الأكاديمي<br/><span>قبل فوات الأوان</span></h1>
     <p class="fade-up delay-2">منصة ذكية تحوّل بيانات الطلاب إلى خرائط أداء تفاعلية، تمكّن المرشد الأكاديمي من التدخل المبكر وتُعطي الطالب رؤية واضحة لمساره.</p>
 
     <div class="hero-btns fade-up delay-3">
-      <a href="index.html"    class="btn-outline">🎓 لوحة المرشد ←</a>
-      <a href="student.html"  class="btn-outline">👤 بوابة الطالب</a>
-      <a href="overview.html" class="btn-outline">🏛️ نظرة المؤسسة</a>
+      <a href="index.html"    class="btn-outline"><i class="bi bi-mortarboard-fill"></i> لوحة المرشد ←</a>
+      <a href="student.html"  class="btn-outline"><i class="bi bi-person-fill"></i> بوابة الطالب</a>
+      <a href="overview.html" class="btn-outline"><i class="bi bi-building"></i> نظرة المؤسسة</a>
     </div>
 
     <div class="hero-stats fade-up delay-4">
@@ -401,19 +405,19 @@
 
   <div class="problem-grid">
     <div class="problem-card" style="border-color:#EF4444;">
-      <div class="icon">📋</div>
+      <div class="icon"><i class="bi bi-clipboard-fill"></i></div>
       <div class="big" style="color:#EF4444;">٣٠%</div>
       <h3>طلاب في خطر تعثر</h3>
       <p>ثلث الطلاب يعانون من مشكلات أكاديمية دون أن يعلم بها المرشد حتى موعد الاختبارات النهائية.</p>
     </div>
     <div class="problem-card" style="border-color:#F59E0B;">
-      <div class="icon">⏱️</div>
+      <div class="icon"><i class="bi bi-stopwatch-fill"></i></div>
       <div class="big" style="color:#F59E0B;">٤٥ د</div>
       <h3>وقت ضائع يدوياً</h3>
       <p>المرشد الأكاديمي يقضي ٤٥ دقيقة لمتابعة أداء طالب واحد يدوياً من سجلات متفرقة.</p>
     </div>
     <div class="problem-card" style="border-color:#10B981;">
-      <div class="icon">💡</div>
+      <div class="icon"><i class="bi bi-lightbulb-fill"></i></div>
       <div class="big" style="color:#10B981;">٦٨%</div>
       <h3>إمكانية التجنّب</h3>
       <p>٦٨% من حالات التعثر يمكن تجنّبها لو تمّ اكتشافها وتقديم الدعم في الأسابيع الأولى من الفصل.</p>
@@ -451,26 +455,26 @@
 <div style="background:#f1f9f7;padding:80px 0;">
 <section style="padding:0 40px;">
   <div class="sec-label">البوابات</div>
-  <div class="sec-title">منظومة متكاملة لثلاثة أطراف</div>
+  <div class="sec-title">ثلاث بوابات متكاملة</div>
   <div class="sec-sub">كل طرف يرى ما يحتاجه بالضبط — لا أكثر ولا أقل.</div>
 
   <div class="portals">
     <a href="index.html" class="portal-card portal-advisor">
-      <div class="p-icon">🎓</div>
+      <div class="p-icon"><i class="bi bi-mortarboard-fill"></i></div>
       <h3>لوحة المرشد الأكاديمي</h3>
       <p>رؤية تفصيلية لكل طالب: البصمة الأكاديمية، توقع الدرجة النهائية، محاكي "ماذا لو؟"، مولّد الرسائل الذكية، وسجل التدخلات.</p>
       <div class="p-link">افتح اللوحة ←</div>
     </a>
     <a href="student.html" class="portal-card portal-student">
-      <div class="p-icon">👤</div>
+      <div class="p-icon"><i class="bi bi-person-fill"></i></div>
       <h3>بوابة الطالب</h3>
       <p>الطالب يرى أداءه، يقارن نفسه بمتوسط زملائه، ويتلقى خطة تحسين شخصية ومسار دراسي واضح.</p>
       <div class="p-link">افتح البوابة ←</div>
     </a>
     <a href="overview.html" class="portal-card portal-overview">
-      <div class="p-icon">🏛️</div>
+      <div class="p-icon"><i class="bi bi-building"></i></div>
       <h3>نظرة المؤسسة</h3>
-      <p>القيادة الأكاديمية ترى الصورة الكاملة: مقارنة الأقسام، خريطة حرارة المهارات، وأثر التدريب على الفصل بأكمله.</p>
+      <p>القيادة الأكاديمية ترى الصورة الكاملة: مقارنة الأقسام وأثر التدريب على الفصل بأكمله.</p>
       <div class="p-link">افتح النظرة ←</div>
     </a>
   </div>
@@ -485,42 +489,37 @@
 
   <div class="feat-grid">
     <div class="feat-card">
-      <div class="f-icon">🕸️</div>
+      <div class="f-icon"><i class="bi bi-diagram-3-fill"></i></div>
       <h4>البصمة الأكاديمية</h4>
       <p>مخطط عنكبوتي يعرض الطالب على ٦ محاور دفعة واحدة مع مقارنة فورية بمتوسط الفصل.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">🔮</div>
+      <div class="f-icon"><i class="bi bi-cpu-fill"></i></div>
       <h4>التوقع الذكي</h4>
       <p>خوارزمية تتنبأ بالدرجة النهائية قبل الاختبار بناءً على مستوى المهارات والأداء الحالي.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">🎮</div>
+      <div class="f-icon"><i class="bi bi-joystick"></i></div>
       <h4>محاكي "ماذا لو؟"</h4>
       <p>المرشد يغيّر نسبة الاختبار النهائي بشريط تفاعلي ويرى أثره على الدرجة الكلية فوراً.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">📧</div>
+      <div class="f-icon"><i class="bi bi-envelope-fill"></i></div>
       <h4>مولّد الرسائل</h4>
-      <p>رسالة رسمية جاهزة للطالب أو ولي الأمر أو إحالة أكاديمية — مبنية تلقائياً من البيانات.</p>
+      <p>رسالة رسمية جاهزة للطالب أو إحالة أكاديمية — مبنية تلقائياً من البيانات.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">🚨</div>
+      <div class="f-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
       <h4>التنبيهات الذكية</h4>
       <p>شريط تنبيهات يظهر تلقائياً يعرض الطلاب في خطر مع إمكانية الانتقال الفوري لملفاتهم.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">📝</div>
+      <div class="f-icon"><i class="bi bi-pencil-square"></i></div>
       <h4>سجل التدخلات</h4>
       <p>المرشد يُسجّل كل تدخل (تواصل / جلسة / إحالة) ويتابع الأثر عبر الزمن.</p>
     </div>
     <div class="feat-card">
-      <div class="f-icon">🧠</div>
-      <h4>خريطة حرارة المهارات</h4>
-      <p>جدول ملوّن يكشف نقاط الضعف والقوة لكل طالب في كل مهارة دفعة واحدة.</p>
-    </div>
-    <div class="feat-card">
-      <div class="f-icon">📊</div>
+      <div class="f-icon"><i class="bi bi-bar-chart-fill"></i></div>
       <h4>مقارنة المؤسسة</h4>
       <p>مقارنة الأقسام والمستويات وتتبع أثر برامج التدريب على مستوى الفصل الدراسي كاملاً.</p>
     </div>
@@ -545,7 +544,7 @@
     <div class="impact-card">
       <div class="i-val count" data-target="3">0</div>
       <div style="color:var(--accent);font-size:20px;font-weight:800;">بوابات</div>
-      <div class="i-lbl">طالب • مرشد • إدارة<br/>منظومة متكاملة في ملف واحد</div>
+      <div class="i-lbl">طالب • مرشد • إدارة<br/>ثلاث بوابات في منظومة واحدة</div>
     </div>
     <div class="impact-card">
       <div class="i-val count" data-target="15">0</div>
@@ -570,9 +569,9 @@
     اختر البوابة التي تناسبك وابدأ فوراً
   </div>
   <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-    <a href="index.html"    class="btn-primary" style="font-size:16px;padding:16px 36px;">🎓 لوحة المرشد</a>
-    <a href="student.html"  class="btn-outline"  style="font-size:16px;padding:16px 30px;">👤 بوابة الطالب</a>
-    <a href="overview.html" class="btn-outline"  style="font-size:16px;padding:16px 30px;">🏛️ نظرة المؤسسة</a>
+    <a href="index.html"    class="btn-primary" style="font-size:16px;padding:16px 36px;"><i class="bi bi-mortarboard-fill"></i> لوحة المرشد</a>
+    <a href="student.html"  class="btn-outline"  style="font-size:16px;padding:16px 30px;"><i class="bi bi-person-fill"></i> بوابة الطالب</a>
+    <a href="overview.html" class="btn-outline"  style="font-size:16px;padding:16px 30px;"><i class="bi bi-building"></i> نظرة المؤسسة</a>
   </div>
 </div>
 

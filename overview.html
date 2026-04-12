@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SPM — نظرة المؤسسة</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
@@ -18,6 +19,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
            background: #f1f9f7; color: #111827; }
+    .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
+    .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
 
     /* ── Modern Nav ── */
     .spm-nav {
@@ -246,10 +250,10 @@
 
   <!-- Pill Nav -->
   <div class="spm-pill-track">
-    <a href="landing.html"  class="spm-link">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-link">🎓 المرشد</a>
-    <a href="student.html"  class="spm-link">👤 الطالب</a>
-    <a href="overview.html" class="spm-link active">🏛️ المؤسسة</a>
+    <a href="landing.html"  class="spm-link"><i class="bi bi-house-fill"></i> الرئيسية</a>
+    <a href="index.html"    class="spm-link"><i class="bi bi-mortarboard-fill"></i> المرشد</a>
+    <a href="student.html"  class="spm-link"><i class="bi bi-person-fill"></i> الطالب</a>
+    <a href="overview.html" class="spm-link active"><i class="bi bi-building"></i> المؤسسة</a>
   </div>
 
   <!-- Actions -->
@@ -265,10 +269,10 @@
 <div class="spm-mobile-overlay" id="spmOverlay">
   <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
   <div class="spm-mob-links">
-    <a href="landing.html"  class="spm-mob-link">🏠 الرئيسية</a>
-    <a href="index.html"    class="spm-mob-link">🎓 لوحة المرشد</a>
-    <a href="student.html"  class="spm-mob-link">👤 بوابة الطالب</a>
-    <a href="overview.html" class="spm-mob-link active">🏛️ نظرة المؤسسة</a>
+    <a href="landing.html"  class="spm-mob-link"><i class="bi bi-house-fill"></i> الرئيسية</a>
+    <a href="index.html"    class="spm-mob-link"><i class="bi bi-mortarboard-fill"></i> لوحة المرشد</a>
+    <a href="student.html"  class="spm-mob-link"><i class="bi bi-person-fill"></i> بوابة الطالب</a>
+    <a href="overview.html" class="spm-mob-link active"><i class="bi bi-building"></i> نظرة المؤسسة</a>
   </div>
 </div>
 
@@ -291,7 +295,7 @@
 
     <!-- Risk Doughnut -->
     <div class="card" style="padding:22px;">
-      <div class="sec-title">🎯 توزيع مؤشر التعثر</div>
+      <div class="sec-title"><i class="bi bi-bullseye"></i> توزيع مؤشر التعثر</div>
       <div style="max-width:190px;margin:0 auto 12px;">
         <canvas id="riskDoughnut"></canvas>
       </div>
@@ -308,7 +312,7 @@
 
     <!-- Level Breakdown -->
     <div class="card" style="padding:22px;">
-      <div class="sec-title">📚 الأداء حسب المستوى</div>
+      <div class="sec-title"><i class="bi bi-book-fill"></i> الأداء حسب المستوى</div>
       <canvas id="levelChart" height="180"></canvas>
     </div>
   </div>
@@ -316,16 +320,16 @@
   <!-- ── Row 3: Students Table ── -->
   <div class="card" style="padding:22px;margin-bottom:24px;overflow-x:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div class="sec-title" style="margin-bottom:0;">👥 جدول الطلاب الشامل</div>
+      <div class="sec-title" style="margin-bottom:0;"><i class="bi bi-people-fill"></i> جدول الطلاب الشامل</div>
       <div style="display:flex;gap:8px;">
-        <input type="text" id="tableSearch" placeholder="🔍 بحث..." oninput="renderTable()"
+        <input type="text" id="tableSearch" placeholder="بحث..." oninput="renderTable()"
           style="padding:7px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:12px;font-family:inherit;outline:none;width:180px;">
         <select id="tableFilter" onchange="renderTable()"
           style="padding:7px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:12px;font-family:inherit;outline:none;background:white;">
           <option value="all">كل المستويات</option>
-          <option value="high">🔴 خطر مرتفع</option>
-          <option value="medium">🟡 متوسط</option>
-          <option value="low">🟢 منخفض</option>
+          <option value="high">خطر مرتفع</option>
+          <option value="medium">متوسط</option>
+          <option value="low">منخفض</option>
         </select>
       </div>
     </div>
@@ -354,13 +358,13 @@
 
     <!-- Before/After Training Line -->
     <div class="card" style="padding:22px;">
-      <div class="sec-title">📈 أثر التدريب على الأداء العام <span>متوسط جميع الطلاب</span></div>
+      <div class="sec-title"><i class="bi bi-graph-up-arrow"></i> أثر التدريب على الأداء العام <span>متوسط جميع الطلاب</span></div>
       <canvas id="trainingChart" height="170"></canvas>
     </div>
 
     <!-- Priority Actions -->
     <div class="card" style="padding:22px;">
-      <div class="sec-title">🚨 إجراءات عاجلة مقترحة</div>
+      <div class="sec-title"><i class="bi bi-exclamation-triangle-fill"></i> إجراءات عاجلة مقترحة</div>
       <div id="priorityActions" style="overflow-y:auto;max-height:240px;">
         <!-- JS -->
       </div>
@@ -482,16 +486,16 @@ const improvement = avgAfter - avgBefore;
 // ============================================================
 function renderKPIs() {
   const kpis = [
-    { icon:'👥', val: students.length, lbl:'إجمالي الطلاب',      sub:'',              subCol:'#6B7280',   bg:'white' },
-    { icon:'🔴', val: highCount,        lbl:'خطر مرتفع',          sub:`${Math.round(highCount/students.length*100)}% من الفصل`, subCol:'#EF4444', bg:'#FFF5F5' },
-    { icon:'📊', val: classAvg+'%',     lbl:'متوسط أداء الفصل',   sub: classAvg>=70?'▲ مقبول':'▼ يحتاج تحسين', subCol: classAvg>=70?'#10B981':'#EF4444', bg:'white' },
-    { icon:'⚡', val: `+${improvement}%`, lbl:'تحسّن بعد التدريب', sub:`${avgBefore}% ← ${avgAfter}%`,  subCol:'#10B981', bg:'#F0FDF4' },
-    { icon:'📝', val: totalIntv,         lbl:'تدخل أكاديمي مسجّل', sub: totalIntv>0?'مُخزَّن محلياً':'لا توجد تدخلات', subCol:'#6B7280', bg:'white' },
+    { icon:'bi-people-fill', val: students.length, lbl:'إجمالي الطلاب',      sub:'',              subCol:'#6B7280',   bg:'white' },
+    { icon:'bi-exclamation-circle-fill', val: highCount, lbl:'خطر مرتفع', sub:`${Math.round(highCount/students.length*100)}% من الفصل`, subCol:'#EF4444', bg:'#FFF5F5' },
+    { icon:'bi-bar-chart-fill', val: classAvg+'%', lbl:'متوسط أداء الفصل', sub: classAvg>=70?'▲ مقبول':'▼ يحتاج تحسين', subCol: classAvg>=70?'#10B981':'#EF4444', bg:'white' },
+    { icon:'bi-lightning-fill', val: `+${improvement}%`, lbl:'تحسّن بعد التدريب', sub:`${avgBefore}% ← ${avgAfter}%`, subCol:'#10B981', bg:'#F0FDF4' },
+    { icon:'bi-pencil-square', val: totalIntv, lbl:'تدخل أكاديمي مسجّل', sub: totalIntv>0?'مُخزَّن محلياً':'لا توجد تدخلات', subCol:'#6B7280', bg:'white' },
   ];
 
   document.getElementById('kpiStrip').innerHTML = kpis.map(k => `
     <div class="kpi-card" style="background:${k.bg};">
-      <div class="kpi-icon">${k.icon}</div>
+      <div class="kpi-icon"><i class="bi ${k.icon}"></i></div>
       <div class="kpi-val" style="color:var(--primary);">${k.val}</div>
       <div class="kpi-lbl">${k.lbl}</div>
       <div class="kpi-sub" style="color:${k.subCol};">${k.sub}</div>
@@ -671,7 +675,7 @@ function renderPriorityActions() {
     const rec = s.recommendations.find(r=>r.urgent) || s.recommendations[0];
     return `
       <div class="action-item action-${s.risk}">
-        <span style="font-size:18px;flex-shrink:0;">${s.risk==='high'?'🔴':'🟡'}</span>
+        <span class="risk-dot ${s.risk==='high'?'high':'med'}" style="margin-top:4px;flex-shrink:0;"></span>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:700;font-size:13px;color:#111827;">${s.name}</div>
           <div style="font-size:11px;color:#6B7280;margin-top:1px;">${s.major} • الأعمال: ${pct}%</div>

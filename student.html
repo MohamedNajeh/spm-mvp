@@ -6,6 +6,7 @@
   <title>SPM — بوابة الطالب</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
@@ -16,6 +17,9 @@
       --success: #10B981;
     }
     body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background: #f1f9f7; }
+    .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
+    .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
 
     /* ─── Login Screen ─── */
     #loginScreen {
@@ -331,10 +335,10 @@
 
     <!-- Pill Nav -->
     <div class="spm-pill-track">
-      <a href="landing.html"  class="spm-link">🏠 الرئيسية</a>
-      <a href="index.html"    class="spm-link">🎓 المرشد</a>
-      <a href="student.html"  class="spm-link active">👤 الطالب</a>
-      <a href="overview.html" class="spm-link">🏛️ المؤسسة</a>
+      <a href="landing.html"  class="spm-link" style="display:none;"><i class="bi bi-house-fill"></i> الرئيسية</a>
+      <a href="index.html"    class="spm-link"><i class="bi bi-mortarboard-fill"></i> المرشد</a>
+      <a href="student.html"  class="spm-link active"><i class="bi bi-person-fill"></i> الطالب</a>
+      <a href="overview.html" class="spm-link"><i class="bi bi-building"></i> المؤسسة</a>
     </div>
 
     <!-- Actions -->
@@ -350,10 +354,10 @@
   <div class="spm-mobile-overlay" id="spmOverlay">
     <button class="spm-mob-close" onclick="toggleMobileMenu()">✕</button>
     <div class="spm-mob-links">
-      <a href="landing.html"  class="spm-mob-link">🏠 الرئيسية</a>
-      <a href="index.html"    class="spm-mob-link">🎓 لوحة المرشد</a>
-      <a href="student.html"  class="spm-mob-link active">👤 بوابة الطالب</a>
-      <a href="overview.html" class="spm-mob-link">🏛️ نظرة المؤسسة</a>
+      <a href="landing.html"  class="spm-mob-link"><i class="bi bi-house-fill"></i> الرئيسية</a>
+      <a href="index.html"    class="spm-mob-link"><i class="bi bi-mortarboard-fill"></i> لوحة المرشد</a>
+      <a href="student.html"  class="spm-mob-link active"><i class="bi bi-person-fill"></i> بوابة الطالب</a>
+      <a href="overview.html" class="spm-mob-link"><i class="bi bi-building"></i> نظرة المؤسسة</a>
       <button onclick="toggleMobileMenu();doLogout();" class="spm-mob-link" style="border:none;cursor:pointer;font-family:inherit;color:#fca5a5;background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.2);">تسجيل خروج</button>
     </div>
   </div>
@@ -385,10 +389,10 @@ const students = [
     ],
     devSkills:["تقوية مهارات التطبيق العملي","تعزيز مهارات الكتابة الأكاديمية"],
     actions:[
-      {type:"urgent",icon:"🚨",title:"تواصل مع مرشدك الأكاديمي هذا الأسبوع",desc:"مستوى الخطر مرتفع — لا تؤجل الاجتماع مع المرشد لوضع خطة تعافٍ."},
-      {type:"urgent",icon:"📚",title:"التحق ببرنامج تدريبي في مهارات التطبيق",desc:"مهارة التطبيق عندك 20% فقط. الالتحاق بورشة تطبيقية يرفعها لـ 60%+ خلال 4 أسابيع."},
-      {type:"normal",icon:"✏️",title:"راجع تكاليفك المتأخرة",desc:"درجة التكاليف 15/25 — مراجعة الواجبات مع المدرس ترفع نقاطك مباشرة."},
-      {type:"tip",   icon:"🤝",title:"تواصل مع زميل متفوق في الفصل",desc:"تعلم من الأقران أثبت فاعليته. اطلب مساعدة زميل في شرح مواد التطبيق والكتابة."},
+      {type:"urgent",icon:"bi-exclamation-triangle-fill",title:"تواصل مع مرشدك الأكاديمي هذا الأسبوع",desc:"مستوى الخطر مرتفع — لا تؤجل الاجتماع مع المرشد لوضع خطة تعافٍ."},
+      {type:"urgent",icon:"bi-book-fill",title:"التحق ببرنامج تدريبي في مهارات التطبيق",desc:"مهارة التطبيق عندك 20% فقط. الالتحاق بورشة تطبيقية يرفعها لـ 60%+ خلال 4 أسابيع."},
+      {type:"normal",icon:"bi-pencil",title:"راجع تكاليفك المتأخرة",desc:"درجة التكاليف 15/25 — مراجعة الواجبات مع المدرس ترفع نقاطك مباشرة."},
+      {type:"tip",   icon:"bi-people-fill",title:"تواصل مع زميل متفوق في الفصل",desc:"تعلم من الأقران أثبت فاعليته. اطلب مساعدة زميل في شرح مواد التطبيق والكتابة."},
     ],
     roadmap:[
       {status:"done",  text:"تشخيص نقاط القوة والضعف"},
@@ -397,7 +401,7 @@ const students = [
       {status:"todo",  text:"رفع درجات التكاليف للـ 20/25"},
       {status:"todo",  text:"إعادة تقييم المهارات بعد 4 أسابيع"},
     ],
-    motivation:"أحمد، كل رحلة تبدأ بخطوة. أنت تعرف الآن أين نقاط ضعفك — وهذا أقوى سلاح لديك. 💪",
+    motivation:"أحمد، كل رحلة تبدأ بخطوة. أنت تعرف الآن أين نقاط ضعفك — وهذا أقوى سلاح لديك.",
   },
   {
     id:2, name:"ريم سالم الزهراني", studentId:"20221189",
@@ -415,10 +419,10 @@ const students = [
     ],
     devSkills:["تعزيز مهارات الفهم والاستيعاب","رفع مستوى التحليل النقدي"],
     actions:[
-      {type:"urgent",icon:"🚨",title:"تواصل مع مرشدك الأكاديمي فوراً",desc:"خطر التعثر مرتفع جداً. الدعم المبكر يحدث فرقاً كبيراً."},
-      {type:"urgent",icon:"🧠",title:"برنامج تأهيلي في مهارات الفهم والاستيعاب",desc:"مهارة الفهم 30% — هذه الأساس لكل المهارات الأخرى. ابدأ بها أولاً."},
-      {type:"normal",icon:"🙋",title:"ارفع نسبة المشاركة الصفية",desc:"المشاركة 6/10 فقط. المشاركة تعزز الفهم وترفع درجاتك في نفس الوقت."},
-      {type:"tip",   icon:"📖",title:"خصص 30 دقيقة يومياً للمراجعة",desc:"الاتساق في المراجعة أهم من جلسة طويلة نادرة. ابدأ بـ 30 دقيقة كل يوم."},
+      {type:"urgent",icon:"bi-exclamation-triangle-fill",title:"تواصل مع مرشدك الأكاديمي فوراً",desc:"خطر التعثر مرتفع جداً. الدعم المبكر يحدث فرقاً كبيراً."},
+      {type:"urgent",icon:"bi-cpu",title:"برنامج تأهيلي في مهارات الفهم والاستيعاب",desc:"مهارة الفهم 30% — هذه الأساس لكل المهارات الأخرى. ابدأ بها أولاً."},
+      {type:"normal",icon:"bi-hand-index-fill",title:"ارفع نسبة المشاركة الصفية",desc:"المشاركة 6/10 فقط. المشاركة تعزز الفهم وترفع درجاتك في نفس الوقت."},
+      {type:"tip",   icon:"bi-journal-text",title:"خصص 30 دقيقة يومياً للمراجعة",desc:"الاتساق في المراجعة أهم من جلسة طويلة نادرة. ابدأ بـ 30 دقيقة كل يوم."},
     ],
     roadmap:[
       {status:"done",  text:"تشخيص نقاط القوة والضعف"},
@@ -427,7 +431,7 @@ const students = [
       {status:"todo",  text:"رفع نسبة المشاركة الصفية"},
       {status:"todo",  text:"مراجعة دورية كل أسبوعين"},
     ],
-    motivation:"ريم، التحدي الكبير يصنع القوي. لديك ما يكفي من الوقت لتغيير المسار — كل خطوة صغيرة تحسب. 🌟",
+    motivation:"ريم، التحدي الكبير يصنع القوي. لديك ما يكفي من الوقت لتغيير المسار — كل خطوة صغيرة تحسب.",
   },
   {
     id:3, name:"خالد محمد الشمري", studentId:"20221302",
@@ -445,10 +449,10 @@ const students = [
     ],
     devSkills:["تعزيز مهارات التطبيق العملي","رفع مستوى الكتابة التقنية"],
     actions:[
-      {type:"normal",icon:"💻",title:"انضم لمشروع تطبيقي عملي",desc:"مهارة التطبيق 40% — الممارسة العملية هي أفضل طريقة لرفعها. ابحث عن مشروع في GitHub."},
-      {type:"normal",icon:"📝",title:"دورة الكتابة التقنية والتوثيق",desc:"الكتابة التقنية مهارة أساسية في سوق العمل. دورة قصيرة تفرق كثيراً في مستوى CV."},
-      {type:"tip",   icon:"🎓",title:"تواصل مع خريج في تخصصك",desc:"خريجو نفس التخصص يعرفون تماماً ما تحتاجه. ابحث في LinkedIn عن خريجي الجامعة."},
-      {type:"tip",   icon:"🏆",title:"شارك في مسابقة أو هاكاثون",desc:"المسابقات تطور المهارات بسرعة وتبني شبكة علاقات قوية."},
+      {type:"normal",icon:"bi-laptop",title:"انضم لمشروع تطبيقي عملي",desc:"مهارة التطبيق 40% — الممارسة العملية هي أفضل طريقة لرفعها. ابحث عن مشروع في GitHub."},
+      {type:"normal",icon:"bi-pencil-square",title:"دورة الكتابة التقنية والتوثيق",desc:"الكتابة التقنية مهارة أساسية في سوق العمل. دورة قصيرة تفرق كثيراً في مستوى CV."},
+      {type:"tip",   icon:"bi-mortarboard-fill",title:"تواصل مع خريج في تخصصك",desc:"خريجو نفس التخصص يعرفون تماماً ما تحتاجه. ابحث في LinkedIn عن خريجي الجامعة."},
+      {type:"tip",   icon:"bi-trophy-fill",title:"شارك في مسابقة أو هاكاثون",desc:"المسابقات تطور المهارات بسرعة وتبني شبكة علاقات قوية."},
     ],
     roadmap:[
       {status:"done",  text:"تشخيص نقاط القوة والضعف"},
@@ -457,7 +461,7 @@ const students = [
       {status:"todo",  text:"دورة الكتابة التقنية"},
       {status:"todo",  text:"التواصل مع خريج للإرشاد المهني"},
     ],
-    motivation:"خالد، أنت في المسار الصحيح. بضع خطوات إضافية في التطبيق والكتابة وستصل للمستوى المتقدم. 🚀",
+    motivation:"خالد، أنت في المسار الصحيح. بضع خطوات إضافية في التطبيق والكتابة وستصل للمستوى المتقدم.",
   },
   {
     id:4, name:"سارة أحمد الحربي", studentId:"20221456",
@@ -475,9 +479,9 @@ const students = [
     ],
     devSkills:["تطوير مهارات التحليل النقدي"],
     actions:[
-      {type:"normal",icon:"🔍",title:"ورشة عمل في التحليل النقدي وحل المشكلات",desc:"مهارة التحليل 55% — تحتاج تعزيزاً. ورشة واحدة قد ترفعها للـ 75%."},
-      {type:"normal",icon:"🏅",title:"شاركي في مسابقة أكاديمية",desc:"مستواك ممتاز بما يكفي للمنافسة. المسابقات تشحذ مهارة التحليل تحت الضغط."},
-      {type:"tip",   icon:"🌐",title:"ابدئي في بناء Portfolio شخصي",desc:"مستواك الجيد يستحق إبرازه. ابني محفظة مشاريع على GitHub وLinkedIn."},
+      {type:"normal",icon:"bi-search",title:"ورشة عمل في التحليل النقدي وحل المشكلات",desc:"مهارة التحليل 55% — تحتاج تعزيزاً. ورشة واحدة قد ترفعها للـ 75%."},
+      {type:"normal",icon:"bi-award-fill",title:"شاركي في مسابقة أكاديمية",desc:"مستواك ممتاز بما يكفي للمنافسة. المسابقات تشحذ مهارة التحليل تحت الضغط."},
+      {type:"tip",   icon:"bi-globe",title:"ابدئي في بناء Portfolio شخصي",desc:"مستواك الجيد يستحق إبرازه. ابني محفظة مشاريع على GitHub وLinkedIn."},
     ],
     roadmap:[
       {status:"done",  text:"تشخيص نقاط القوة والضعف"},
@@ -486,7 +490,7 @@ const students = [
       {status:"todo",  text:"المشاركة في مسابقة أكاديمية"},
       {status:"todo",  text:"بناء Portfolio مهني"},
     ],
-    motivation:"سارة، أداؤك مميز ومتوازن. خطوة في التحليل النقدي وستكونين من المتفوقين. أنت قريبة جداً! ✨",
+    motivation:"سارة، أداؤك مميز ومتوازن. خطوة في التحليل النقدي وستكونين من المتفوقين. أنت قريبة جداً!",
   },
   {
     id:5, name:"محمد ناصر القحطاني", studentId:"20221578",
@@ -504,9 +508,9 @@ const students = [
     ],
     devSkills:["الإبداع والابتكار","القيادة الأكاديمية"],
     actions:[
-      {type:"normal",icon:"🌟",title:"رشّح نفسك لبرنامج الطلاب المتفوقين",desc:"معدلك وأداؤك يؤهلانك تماماً. دعم الأقران يطور مهارات القيادة بشكل استثنائي."},
-      {type:"normal",icon:"🔬",title:"شارك في بحث علمي مع هيئة التدريس",desc:"المستوى الخامس هو الوقت المثالي للدخول في الأبحاث الأكاديمية."},
-      {type:"tip",   icon:"🏆",title:"شارك في هاكاثون أو مسابقة تقنية خارجية",desc:"منافسات خارج الجامعة تبني الخبرة وتفتح أبواب التوظيف."},
+      {type:"normal",icon:"bi-star-fill",title:"رشّح نفسك لبرنامج الطلاب المتفوقين",desc:"معدلك وأداؤك يؤهلانك تماماً. دعم الأقران يطور مهارات القيادة بشكل استثنائي."},
+      {type:"normal",icon:"bi-microscope",title:"شارك في بحث علمي مع هيئة التدريس",desc:"المستوى الخامس هو الوقت المثالي للدخول في الأبحاث الأكاديمية."},
+      {type:"tip",   icon:"bi-trophy-fill",title:"شارك في هاكاثون أو مسابقة تقنية خارجية",desc:"منافسات خارج الجامعة تبني الخبرة وتفتح أبواب التوظيف."},
     ],
     roadmap:[
       {status:"done",  text:"إتقان المهارات الأساسية"},
@@ -515,7 +519,7 @@ const students = [
       {status:"todo",  text:"التقدم لبرنامج الطلاب المتفوقين"},
       {status:"todo",  text:"التأهل لفرص التدريب الصيفي"},
     ],
-    motivation:"محمد، أنت من بين أفضل 5% في الفصل! حافظ على هذا المستوى وانطلق نحو التميز. 🌠",
+    motivation:"محمد، أنت من بين أفضل 5% في الفصل! حافظ على هذا المستوى وانطلق نحو التميز.",
   },
   {
     id:6, name:"نورة يوسف العتيبي", studentId:"20221699",
@@ -533,9 +537,9 @@ const students = [
     ],
     devSkills:["التميز والريادة الأكاديمية"],
     actions:[
-      {type:"normal",icon:"👩‍🏫",title:"المساعد الأكاديمي وإرشاد الطلاب",desc:"مهاراتك الاستثنائية مؤهلة لدعم زميلاتك. برنامج المساعد الأكاديمي مفتوح لك."},
-      {type:"normal",icon:"💡",title:"شاركي في هاكاثونات ومسابقات تقنية",desc:"الهاكاثونات تبني شبكة علاقات واسعة في مجال التقنية وتفتح أبواباً مهنية استثنائية."},
-      {type:"tip",   icon:"📜",title:"توجهي نحو البحث العلمي والنشر",desc:"درجاتك ومهاراتك تؤهلك للنشر الأكاديمي. تحدثي مع أستاذ في تخصصك."},
+      {type:"normal",icon:"bi-person-video2",title:"المساعد الأكاديمي وإرشاد الطلاب",desc:"مهاراتك الاستثنائية مؤهلة لدعم زميلاتك. برنامج المساعد الأكاديمي مفتوح لك."},
+      {type:"normal",icon:"bi-lightbulb-fill",title:"شاركي في هاكاثونات ومسابقات تقنية",desc:"الهاكاثونات تبني شبكة علاقات واسعة في مجال التقنية وتفتح أبواباً مهنية استثنائية."},
+      {type:"tip",   icon:"bi-file-text-fill",title:"توجهي نحو البحث العلمي والنشر",desc:"درجاتك ومهاراتك تؤهلك للنشر الأكاديمي. تحدثي مع أستاذ في تخصصك."},
     ],
     roadmap:[
       {status:"done",  text:"إتقان جميع المهارات الأساسية"},
@@ -544,13 +548,13 @@ const students = [
       {status:"todo",  text:"نشر بحث أكاديمي"},
       {status:"todo",  text:"القبول في برامج الدراسات العليا"},
     ],
-    motivation:"نورة، أنت قمة الأداء في الفصل! الآن الوقت مناسب للتأثير في من حولك وبناء مسيرة استثنائية. 👑",
+    motivation:"نورة، أنت قمة الأداء في الفصل! الآن الوقت مناسب للتأثير في من حولك وبناء مسيرة استثنائية.",
   },
 ];
 
 // ── helpers ──────────────────────────────────────────────
 function skillColor(s){ return s>=70?'#10B981':s>=40?'#F59E0B':'#EF4444'; }
-function skillLabel(s){ return s>=70?'متقدم ✅':s>=40?'متوسط ⚠️':'يحتاج تحسين 🔴'; }
+function skillLabel(s){ return s>=70?'متقدم':s>=40?'متوسط':'يحتاج تحسين'; }
 function riskLabel(r){  return r==='high'?'مرتفع':r==='medium'?'متوسط':'منخفض'; }
 function riskBadge(r){  return r==='high'?'badge-high':r==='medium'?'badge-med':'badge-low'; }
 function riskEmoji(r){  return r==='high'?'🔴':r==='medium'?'🟡':'🟢'; }
@@ -625,7 +629,7 @@ function renderStudentDashboard(s){
 
       <!-- Skills -->
       <div class="card p-5">
-        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;">📊 مستوى مهاراتك</div>
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;"><i class="bi bi-bar-chart-fill"></i> مستوى مهاراتك</div>
         ${s.skills.map(sk => `
           <div class="skill-row">
             <div class="skill-header">
@@ -638,13 +642,13 @@ function renderStudentDashboard(s){
           </div>
         `).join('')}
         <div style="margin-top:14px;padding:10px 12px;background:#F9FAFB;border-radius:8px;font-size:12px;color:#6B7280;">
-          💡 المهارات محسوبة على أساس أداءك في أعمال السنة والاختبارات الفصلية
+          <i class="bi bi-lightbulb-fill"></i> المهارات محسوبة على أساس أداءك في أعمال السنة والاختبارات الفصلية
         </div>
       </div>
 
       <!-- Grades -->
       <div class="card p-5">
-        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;">📋 درجاتك التفصيلية</div>
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:18px;"><i class="bi bi-clipboard-fill"></i> درجاتك التفصيلية</div>
         ${Object.values(s.grades).map(g => {
           const gp = Math.round(g.score/g.max*100);
           const col= gp>=70?'#10B981':gp>=50?'#F59E0B':'#EF4444';
@@ -669,7 +673,7 @@ function renderStudentDashboard(s){
 
     <!-- Progress Chart -->
     <div class="card p-5 mb-5">
-      <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">📈 تطور أدائك عبر الفصل الدراسي</div>
+      <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;"><i class="bi bi-graph-up-arrow"></i> تطور أدائك عبر الفصل الدراسي</div>
       <canvas id="progressChart" height="80"></canvas>
     </div>
 
@@ -678,11 +682,11 @@ function renderStudentDashboard(s){
 
       <!-- Action Plan -->
       <div class="card p-5">
-        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">🎯 خطة التحسين الشخصية</div>
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;"><i class="bi bi-bullseye"></i> خطة التحسين الشخصية</div>
         ${s.actions.map(a => `
           <div class="action-item action-${a.type}">
             <div class="action-icon" style="background:${a.type==='urgent'?'#FEE2E2':a.type==='normal'?'#D1FAE5':'#DBEAFE'};">
-              ${a.icon}
+              <i class="bi ${a.icon}"></i>
             </div>
             <div>
               <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:3px;">${a.title}</div>
@@ -694,7 +698,7 @@ function renderStudentDashboard(s){
 
       <!-- Roadmap -->
       <div class="card p-5">
-        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;">🗺️ خارطة الطريق الأكاديمية</div>
+        <div style="font-size:15px;font-weight:800;color:#111827;margin-bottom:16px;"><i class="bi bi-map-fill"></i> خارطة الطريق الأكاديمية</div>
         ${s.roadmap.map((step,i) => `
           <div class="step">
             <div class="step-circle step-${step.status}">
@@ -713,7 +717,7 @@ function renderStudentDashboard(s){
 
         <!-- Dev Skills -->
         <div style="margin-top:16px;padding:12px;background:#FFFBEB;border-radius:10px;border:1px solid #FDE68A;">
-          <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px;">⚡ المهارات المستهدفة للتطوير</div>
+          <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px;"><i class="bi bi-lightning-fill"></i> المهارات المستهدفة للتطوير</div>
           ${s.devSkills.map(d=>`
             <div style="font-size:12px;color:#78350F;padding:3px 0;">• ${d}</div>
           `).join('')}
@@ -727,7 +731,7 @@ function renderStudentDashboard(s){
       <!-- Intro -->
       <div id="quizIntro">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <div style="font-size:30px;">🎯</div>
+          <div style="font-size:30px;color:var(--primary);"><i class="bi bi-bullseye"></i></div>
           <div>
             <div style="font-size:16px;font-weight:800;color:#111827;">تدرب على اختبار الجاهزية</div>
             <div style="font-size:12px;color:#6B7280;margin-top:2px;">10 أسئلة • 4 محاور أكاديمية • نتائج فورية وتوصيات مخصصة</div>
@@ -741,7 +745,7 @@ function renderStudentDashboard(s){
         <button onclick="startQuiz()"
           style="width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;"
           onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-          🚀 ابدأ الاختبار
+          <i class="bi bi-play-circle-fill"></i> ابدأ الاختبار
         </button>
       </div>
 
@@ -925,7 +929,7 @@ function renderQuestion(idx) {
   const prevBtn = document.getElementById('qPrevBtn');
   nextBtn.disabled  = chosen === null;
   nextBtn.style.opacity = chosen === null ? '0.4' : '1';
-  nextBtn.textContent   = idx === total - 1 ? 'إنهاء الاختبار ✅' : 'التالي ←';
+  nextBtn.innerHTML   = idx === total - 1 ? '<i class="bi bi-check-circle-fill"></i> إنهاء الاختبار' : 'التالي ←';
   prevBtn.disabled  = idx === 0;
   prevBtn.style.opacity = idx === 0 ? '0.4' : '1';
 }
@@ -987,8 +991,8 @@ function showQuizResults(result) {
   div.style.display = 'block';
 
   const levels = [
-    { min:80, label:'جاهز للاختبار 🎉',       col:'#10B981', msg:'أنت جاهز! يمكنك تقديم الاختبار الآن.',                              wks:0 },
-    { min:60, label:'قريب من الجاهزية ⚡',      col:'#F59E0B', msg:'تحتاج 1–2 أسبوع للتركيز على النقاط الضعيفة.',                    wks:2 },
+    { min:80, label:'جاهز للاختبار',       col:'#10B981', msg:'أنت جاهز! يمكنك تقديم الاختبار الآن.',                              wks:0 },
+    { min:60, label:'قريب من الجاهزية',      col:'#F59E0B', msg:'تحتاج 1–2 أسبوع للتركيز على النقاط الضعيفة.',                    wks:2 },
     { min:40, label:'بحاجة لتحضير إضافي 📚',   col:'#F97316', msg:'يُنصح بمراجعة شاملة للمحاور الضعيفة لمدة 3–4 أسابيع.',           wks:4 },
     { min:0,  label:'تحتاج دعماً أكاديمياً 🤝', col:'#EF4444', msg:'يُنصح بزيارة مرشدك الأكاديمي وإعداد خطة دراسية مكثفة (4–6 أسابيع).', wks:6 },
   ];
@@ -1002,7 +1006,7 @@ function showQuizResults(result) {
     </div>
 
     <div style="margin-bottom:20px;">
-      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;">📊 النتيجة حسب المهارة</div>
+      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;"><i class="bi bi-bar-chart-fill"></i> النتيجة حسب المهارة</div>
       ${Object.entries(result.skillPcts).map(([sk,pct]) => `
         <div style="margin-bottom:11px;">
           <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px;">
@@ -1014,16 +1018,16 @@ function showQuizResults(result) {
 
     ${result.weakAreas.length ? `
     <div style="margin-bottom:20px;">
-      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:10px;">💡 نقاط تحتاج تقوية وطرق تحسينها</div>
+      <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:10px;"><i class="bi bi-lightbulb-fill"></i> نقاط تحتاج تقوية وطرق تحسينها</div>
       ${result.weakAreas.slice(0,2).map(area => `
         <div style="background:#FFFBEB;border-right:3px solid #F59E0B;border-radius:10px;padding:14px;margin-bottom:10px;">
-          <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:8px;">⚡ مهارة ${area} — ${result.skillPcts[area]}%</div>
+          <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:8px;"><i class="bi bi-lightning-fill"></i> مهارة ${area} — ${result.skillPcts[area]}%</div>
           ${(QUIZ_RECS[area]||[]).map(t=>`<div style="font-size:12px;color:#78350F;padding:2px 0;">• ${t}</div>`).join('')}
         </div>`).join('')}
     </div>` : ''}
 
     <div style="background:#EFF6FF;border-right:3px solid #3B82F6;border-radius:10px;padding:14px;margin-bottom:14px;">
-      <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:4px;">🗓️ توصية موعد الاختبار الفعلي</div>
+      <div style="font-size:13px;font-weight:700;color:#1D4ED8;margin-bottom:4px;"><i class="bi bi-calendar-event-fill"></i> توصية موعد الاختبار الفعلي</div>
       <div style="font-size:13px;color:#1E40AF;">${lv.msg}</div>
       ${lv.wks ? `<div style="font-size:12px;color:#3B82F6;margin-top:4px;font-weight:600;">الوقت المقترح: ${lv.wks} أسابيع من الآن</div>` : ''}
     </div>
@@ -1035,7 +1039,7 @@ function showQuizResults(result) {
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button onclick="retakeQuiz()" style="flex:1;min-width:130px;padding:11px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 إعادة الاختبار</button>
-      <button onclick="toggleReview(this)" style="flex:1;min-width:130px;padding:11px;background:white;border:2px solid #E5E7EB;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#374151;">📋 مراجعة الإجابات</button>
+      <button onclick="toggleReview(this)" style="flex:1;min-width:130px;padding:11px;background:white;border:2px solid #E5E7EB;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:#374151;"><i class="bi bi-clipboard-fill"></i> مراجعة الإجابات</button>
     </div>
     <div id="reviewDiv" style="display:none;margin-top:18px;"></div>
   `;
@@ -1049,19 +1053,19 @@ function retakeQuiz() {
 
 function toggleReview(btn) {
   const div = document.getElementById('reviewDiv');
-  if (div.style.display === 'block') { div.style.display = 'none'; btn.textContent = '📋 مراجعة الإجابات'; return; }
+  if (div.style.display === 'block') { div.style.display = 'none'; btn.innerHTML = '<i class="bi bi-clipboard-fill"></i> مراجعة الإجابات'; return; }
   btn.textContent = '▲ إخفاء المراجعة';
   const { questions, answers } = quizState;
   div.innerHTML = `
-    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;">📋 مراجعة الإجابات</div>
+    <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;"><i class="bi bi-clipboard-fill"></i> مراجعة الإجابات</div>
     ${questions.map((q,i) => {
       const ua = answers[i]; const ok = ua === q.ans;
       return `<div style="border:2px solid ${ok?'#10B981':'#EF4444'};border-radius:10px;padding:14px;margin-bottom:10px;background:${ok?'#F0FDF4':'#FFF5F5'};">
-        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:4px;">${i+1}. ${q.skill} ${ok?'✅':'❌'}</div>
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:4px;">${i+1}. ${q.skill} <i class="bi ${ok?'bi-check-circle-fill" style="color:#10B981':'bi-x-circle-fill" style="color:#EF4444'}"></i></div>
         <div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:8px;">${q.q}</div>
         ${ua !== null && !ok ? `<div style="font-size:12px;color:#EF4444;margin-bottom:4px;">إجابتك: ${q.opts[ua]}</div>` : ''}
         <div style="font-size:12px;color:#10B981;margin-bottom:6px;">✓ الصحيحة: ${q.opts[q.ans]}</div>
-        <div style="font-size:11px;color:#6B7280;background:white;padding:8px;border-radius:6px;line-height:1.6;">💡 ${q.exp}</div>
+        <div style="font-size:11px;color:#6B7280;background:white;padding:8px;border-radius:6px;line-height:1.6;"><i class="bi bi-lightbulb-fill" style="color:#F59E0B;"></i> ${q.exp}</div>
       </div>`;
     }).join('')}`;
   div.style.display = 'block';

@@ -6,6 +6,7 @@
   <title>SPM - خارطة الأداء الذكية</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
     :root {
@@ -17,6 +18,9 @@
       --success: #10B981;
     }
     body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background: #f1f9f7; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
+    .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
+    .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
 
     /* ══════════════════════════════════════════════════════════
        MODERN GLASS NAV
@@ -523,8 +527,8 @@
 
   <!-- Actions -->
   <div class="spm-nav-actions">
-    <button onclick="startTour()"  class="spm-act-btn spm-act-tour spm-hide-mob" title="جولة إرشادية">🚀 جولة سريعة</button>
-    <button onclick="toggleDark()" class="spm-act-btn spm-act-dark" title="الوضع الليلي" id="darkBtn">🌙</button>
+    <button onclick="startTour()"  class="spm-act-btn spm-act-tour spm-hide-mob" title="جولة إرشادية"><i class="bi bi-map-fill"></i> جولة سريعة</button>
+    <button onclick="toggleDark()" class="spm-act-btn spm-act-dark" title="الوضع الليلي" id="darkBtn"><i class="bi bi-moon-fill" id="darkIcon"></i></button>
     <button class="spm-hamburger" id="spmHamburger" onclick="openSidebar()" aria-label="القائمة">
       <span></span><span></span><span></span>
     </button>
@@ -571,7 +575,7 @@
     <div style="font-size:12px;opacity:0.5;margin-bottom:10px;">قائمة الطلاب</div>
 
     <!-- Search -->
-    <input type="text" id="searchInput" placeholder="🔍 ابحث عن طالب..."
+    <input type="text" id="searchInput" placeholder="ابحث عن طالب..."
       oninput="filterStudents()"
       style="width:100%;padding:8px 12px;border-radius:8px;border:none;background:rgba(255,255,255,0.12);
              color:white;font-family:inherit;font-size:12px;margin-bottom:8px;box-sizing:border-box;outline:none;">
@@ -579,9 +583,9 @@
     <!-- Risk Filter -->
     <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
       <button class="filter-btn active" data-risk="all"    onclick="setFilter('all')">الكل</button>
-      <button class="filter-btn"        data-risk="high"   onclick="setFilter('high')">🔴 خطر</button>
-      <button class="filter-btn"        data-risk="medium" onclick="setFilter('medium')">🟡 متوسط</button>
-      <button class="filter-btn"        data-risk="low"    onclick="setFilter('low')">🟢 جيد</button>
+      <button class="filter-btn"        data-risk="high"   onclick="setFilter('high')"><span class="risk-dot high"></span> خطر</button>
+      <button class="filter-btn"        data-risk="medium" onclick="setFilter('medium')"><span class="risk-dot med"></span> متوسط</button>
+      <button class="filter-btn"        data-risk="low"    onclick="setFilter('low')"><span class="risk-dot low"></span> جيد</button>
     </div>
 
     <div id="studentList"></div>
@@ -596,7 +600,7 @@
                   font-size:12px;font-weight:600;text-decoration:none;transition:all 0.18s;"
            onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='white'"
            onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.75)'">
-          <span style="font-size:15px;">🏠</span> الرئيسية
+          <i class="bi bi-house-fill" style="font-size:15px;"></i> الرئيسية
         </a>
         <a id="studentPortalLink" href="student.html" target="_blank"
            style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
@@ -604,7 +608,7 @@
                   font-size:12px;font-weight:700;text-decoration:none;transition:all 0.18s;"
            onmouseover="this.style.background='rgba(106,199,189,0.25)'"
            onmouseout="this.style.background='rgba(106,199,189,0.15)'">
-          <span style="font-size:15px;">👤</span> بوابة الطالب
+          <i class="bi bi-person-fill" style="font-size:15px;"></i> بوابة الطالب
         </a>
         <a href="overview.html"
            style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
@@ -612,7 +616,7 @@
                   font-size:12px;font-weight:600;text-decoration:none;transition:all 0.18s;"
            onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='white'"
            onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.75)'">
-          <span style="font-size:15px;">🏛️</span> نظرة المؤسسة
+          <i class="bi bi-building" style="font-size:15px;"></i> نظرة المؤسسة
         </a>
       </div>
     </div>
@@ -913,11 +917,11 @@ function renderAlerts() {
 
   banner.innerHTML = `
     <span style="font-size:12px;font-weight:700;color:#92400E;white-space:nowrap;flex-shrink:0;">
-      🚨 ${alerts.length} تنبيه نشط:
+      <i class="bi bi-exclamation-triangle-fill"></i> ${alerts.length} تنبيه نشط:
     </span>
     ${alerts.map(a => `
       <div class="alert-pill alert-${a.lvl}" onclick="selectStudent(${a.s.id})">
-        ${a.lvl === 'high' ? '🔴' : '🟡'} ${a.msg}
+        <span class="risk-dot ${a.lvl === 'high' ? 'high' : 'med'}" style="margin-left:4px;"></span> ${a.msg}
       </div>
     `).join('')}
     <div style="flex:1;min-width:16px;"></div>
@@ -939,12 +943,12 @@ function renderIntList(sid) {
   if (list.length === 0) {
     return `<div style="text-align:center;padding:24px 0;color:#9CA3AF;font-size:13px;">لا توجد تدخلات مسجلة بعد</div>`;
   }
-  const icons = { contact:'📞', session:'🎓', referral:'🏥', note:'📋' };
+  const icons = { contact:'<i class="bi bi-telephone-fill"></i>', session:'<i class="bi bi-mortarboard-fill"></i>', referral:'<i class="bi bi-heart-pulse-fill"></i>', note:'<i class="bi bi-clipboard-fill"></i>' };
   const labels = { contact:'تواصل مع الطالب', session:'جلسة إرشادية', referral:'إحالة لدعم أكاديمي', note:'ملاحظة' };
   return list.map(i => `
     <div class="int-item int-${i.type}">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <span style="font-weight:700;font-size:12px;">${icons[i.type] || '📋'} ${labels[i.type] || i.type}</span>
+        <span style="font-weight:700;font-size:12px;">${icons[i.type] || '<i class="bi bi-clipboard-fill"></i>'} ${labels[i.type] || i.type}</span>
         <span style="font-size:11px;color:#9CA3AF;">${i.date}</span>
       </div>
       <div style="color:#374151;">${i.text}</div>
@@ -1093,7 +1097,7 @@ ${recs}
 function switchMsgType(type, sid) {
   const s = students.find(x => x.id === sid);
   document.querySelectorAll('.msg-type-btn').forEach((b, i) => {
-    const types = ['student','parent','referral'];
+    const types = ['student','referral'];
     b.classList.toggle('active', types[i] === type);
   });
   document.getElementById('msgOutput').value = generateMessage(s, type);
@@ -1104,9 +1108,9 @@ function copyMessage() {
   navigator.clipboard.writeText(ta.value).then(() => {
     const btn = ta.nextElementSibling;
     const orig = btn.textContent;
-    btn.textContent = '✅ تم النسخ!';
+    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> تم النسخ!';
     btn.style.background = '#10B981';
-    setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--primary)'; }, 2000);
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = 'var(--primary)'; }, 2000);
   });
 }
 
@@ -1178,7 +1182,7 @@ function renderMain(s) {
         <button class="no-print stu-hdr-print" onclick="printReport()"
           style="padding:7px 14px;background:white;border:2px solid #E5E7EB;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:border-color 0.2s;"
           onmouseover="this.style.borderColor='#3c7974'" onmouseout="this.style.borderColor='#E5E7EB'">
-          📤 طباعة
+          <i class="bi bi-printer-fill"></i> طباعة
         </button>
       </div>
       <!-- Risk badge — always on its own row, clear and readable -->
@@ -1190,7 +1194,7 @@ function renderMain(s) {
         <button class="no-print stu-hdr-print-mob" onclick="printReport()"
           style="padding:5px 12px;background:white;border:2px solid #E5E7EB;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#374151;display:none;align-items:center;gap:4px;transition:border-color 0.2s;"
           onmouseover="this.style.borderColor='#3c7974'" onmouseout="this.style.borderColor='#E5E7EB'">
-          📤 طباعة
+          <i class="bi bi-printer-fill"></i> طباعة
         </button>
       </div>
     </div>
@@ -1207,14 +1211,14 @@ function renderMain(s) {
 
       <!-- توقع الدرجة النهائية -->
       <div class="card stat-mini" style="padding:16px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);">
-        <div class="stat-ttl" style="color:#1D4ED8;">🔮 التوقع النهائي</div>
+        <div class="stat-ttl" style="color:#1D4ED8;"><i class="bi bi-cpu-fill"></i> التوقع النهائي</div>
         <div class="stat-val" style="color:#1E40AF;">${pred.score}%</div>
         <div class="stat-lbl" style="color:#3B82F6;">± ${pred.margin}% دقة التوقع</div>
       </div>
 
       <!-- مقارنة متوسط الفصل -->
       <div class="card stat-mini" style="padding:16px;">
-        <div class="stat-ttl">📊 متوسط الفصل</div>
+        <div class="stat-ttl"><i class="bi bi-bar-chart-fill"></i> متوسط الفصل</div>
         <div class="stat-val" style="color:#111827;">${classAvgPct}%</div>
         <div class="stat-lbl" style="color:${gap>=0?'#10B981':'#EF4444'};font-size:11px;font-weight:700;">
           ${gap>=0?'▲ أعلى بـ':'▼ أدنى بـ'} ${Math.abs(gap)}%
@@ -1223,7 +1227,7 @@ function renderMain(s) {
 
       <!-- الترتيب في الفصل -->
       <div class="card stat-mini" style="padding:16px;">
-        <div class="stat-ttl">🏅 الترتيب</div>
+        <div class="stat-ttl"><i class="bi bi-award-fill"></i> الترتيب</div>
         <div class="stat-val" style="color:#111827;">${rankPos}<span style="font-size:16px;color:#9CA3AF;">/${students.length}</span></div>
         <div class="stat-lbl">في الفصل الدراسي</div>
       </div>
@@ -1234,7 +1238,7 @@ function renderMain(s) {
 
       <!-- Radar: Academic Fingerprint -->
       <div class="card" id="radarSection" style="padding:20px;">
-        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🕸️ البصمة الأكاديمية</div>
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><i class="bi bi-diagram-3-fill"></i> الخريطة الأكاديمية</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">ملف الطالب على 6 محاور أكاديمية</div>
         <canvas id="radarChart" height="210"></canvas>
       </div>
@@ -1300,7 +1304,7 @@ function renderMain(s) {
           <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;">بحاجة للتطوير:</div>
           ${s.devSkills.map(d => `
             <div style="font-size:12px;color:#6B7280;padding:4px 0;display:flex;align-items:center;gap-6px;">
-              <span style="color:#F59E0B;">⚡</span> ${d}
+              <i class="bi bi-lightning-fill" style="color:#F59E0B;"></i> ${d}
             </div>
           `).join('')}
         </div>
@@ -1312,12 +1316,12 @@ function renderMain(s) {
         ${s.recommendations.map(r => `
           <div class="recommendation-item ${r.urgent ? 'urgent' : ''}">
             <div style="font-size:13px;color:#374151;">
-              ${r.urgent ? '🔴' : '✅'} ${r.text}
+              ${r.urgent ? '<i class="bi bi-exclamation-circle-fill" style="color:#EF4444;"></i>' : '<i class="bi bi-check-circle-fill" style="color:#10B981;"></i>'} ${r.text}
             </div>
           </div>
         `).join('')}
         <div style="margin-top:12px;padding:10px;background:#EFF6FF;border-radius:8px;font-size:12px;color:#1E40AF;">
-          💡 هذه التوصيات مبنية على تحليل أعمال السنة (50%) وبيانات المهارات الأكاديمية.
+          <i class="bi bi-lightbulb-fill"></i> هذه التوصيات مبنية على تحليل أعمال السنة (50%) وبيانات المهارات الأكاديمية.
         </div>
       </div>
     </div>
@@ -1327,7 +1331,7 @@ function renderMain(s) {
 
       <!-- 🎮 What-If Simulator -->
       <div class="card" id="whatIfSection" style="padding:20px;">
-        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">🎮 محاكي "ماذا لو؟"</div>
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><i class="bi bi-joystick"></i> محاكي "ماذا لو؟"</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:16px;">حرّك الشريط لترى أثر الاختبار النهائي على الدرجة الكلية</div>
 
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -1358,12 +1362,11 @@ function renderMain(s) {
 
       <!-- 📧 Smart Message Generator -->
       <div class="card" id="msgSection" style="padding:20px;">
-        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;">📧 مولّد الرسائل الذكية</div>
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:4px;"><i class="bi bi-envelope-fill"></i> مولّد الرسائل الذكية</div>
         <div style="font-size:11px;color:#9CA3AF;margin-bottom:12px;">رسالة رسمية جاهزة بناءً على بيانات الطالب</div>
 
         <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
           <button class="msg-type-btn active" onclick="switchMsgType('student',${s.id})">للطالب</button>
-          <button class="msg-type-btn"        onclick="switchMsgType('parent',${s.id})">لولي الأمر</button>
           <button class="msg-type-btn"        onclick="switchMsgType('referral',${s.id})">إحالة أكاديمية</button>
         </div>
 
@@ -1375,7 +1378,7 @@ ${generateMessage(s,'student')}</textarea>
         <button onclick="copyMessage()"
           style="margin-top:8px;width:100%;padding:9px;background:var(--primary);color:white;border:none;
                  border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-          📋 نسخ الرسالة
+          <i class="bi bi-clipboard-fill"></i> نسخ الرسالة
         </button>
       </div>
     </div>
@@ -1385,26 +1388,26 @@ ${generateMessage(s,'student')}</textarea>
 
       <!-- Add Intervention Form -->
       <div class="card" style="padding:20px;">
-        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">📝 تسجيل تدخل جديد</div>
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;"><i class="bi bi-pencil-square"></i> تسجيل تدخل جديد</div>
         <select id="intType"
           style="width:100%;padding:9px 12px;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:10px;font-family:inherit;font-size:13px;color:#374151;background:white;outline:none;">
-          <option value="contact">📞 تواصل مع الطالب</option>
-          <option value="session">🎓 جلسة إرشادية</option>
-          <option value="referral">🏥 إحالة لدعم أكاديمي</option>
-          <option value="note">📋 ملاحظة عامة</option>
+          <option value="contact">تواصل مع الطالب</option>
+          <option value="session">جلسة إرشادية</option>
+          <option value="referral">إحالة لدعم أكاديمي</option>
+          <option value="note">ملاحظة عامة</option>
         </select>
         <textarea id="intText" rows="4" placeholder="اكتب تفاصيل التدخل الأكاديمي هنا..."
           style="width:100%;padding:9px 12px;border:1px solid #E5E7EB;border-radius:8px;font-family:inherit;font-size:13px;resize:none;margin-bottom:10px;box-sizing:border-box;color:#374151;outline:none;"></textarea>
         <button onclick="saveIntervention(${s.id})"
           style="width:100%;padding:10px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-          ✅ حفظ التدخل
+          <i class="bi bi-check-circle-fill"></i> حفظ التدخل
         </button>
       </div>
 
       <!-- Intervention History -->
       <div class="card" style="padding:20px;max-height:320px;overflow-y:auto;">
         <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">
-          📋 سجل التدخلات
+          <i class="bi bi-clipboard-fill"></i> سجل التدخلات
           <span style="font-size:11px;font-weight:400;color:#9CA3AF;margin-right:8px;">(يُحفظ محلياً)</span>
         </div>
         <div id="intList">${renderIntList(s.id)}</div>
@@ -1418,7 +1421,7 @@ ${generateMessage(s,'student')}</textarea>
         if (!qr) return `
           <div class="card" style="padding:20px;border:2px dashed #D1FAE5;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-              <span style="font-size:20px;">📝</span>
+              <i class="bi bi-pencil-square" style="font-size:20px;color:#3c7974;"></i>
               <div style="font-size:14px;font-weight:700;color:#111827;">اختبار الجاهزية — تقييم الطالب الذاتي</div>
               <span style="margin-right:auto;font-size:11px;color:#9CA3AF;background:#F3F4F6;padding:3px 10px;border-radius:999px;">لم يُجرَ الاختبار بعد</span>
             </div>
@@ -1443,7 +1446,7 @@ ${generateMessage(s,'student')}</textarea>
         return `
           <div class="card" style="padding:20px;border-right:4px solid ${scoreColor};">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-              <span style="font-size:20px;">📝</span>
+              <i class="bi bi-pencil-square" style="font-size:20px;color:#3c7974;"></i>
               <div style="font-size:14px;font-weight:700;color:#111827;">اختبار الجاهزية — تقييم الطالب الذاتي</div>
               <span style="font-size:11px;color:#6B7280;margin-right:auto;">${dateStr}</span>
             </div>
@@ -1461,8 +1464,8 @@ ${generateMessage(s,'student')}</textarea>
                 <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;">تفصيل المهارات:</div>
                 ${skillRows}
                 ${weakAreas.length ? `<div style="margin-top:10px;padding:8px 12px;background:#FEF3C7;border-radius:8px;font-size:11px;color:#92400E;">
-                  ⚠️ مجالات تحتاج اهتماماً: <strong>${weakAreas.join(' • ')}</strong>
-                </div>` : `<div style="margin-top:10px;padding:8px 12px;background:#D1FAE5;border-radius:8px;font-size:11px;color:#065F46;">✅ الطالب على مستوى جيد في جميع المهارات</div>`}
+                  <i class="bi bi-exclamation-circle"></i> مجالات تحتاج اهتماماً: <strong>${weakAreas.join(' • ')}</strong>
+                </div>` : `<div style="margin-top:10px;padding:8px 12px;background:#D1FAE5;border-radius:8px;font-size:11px;color:#065F46;"><i class="bi bi-check-circle-fill"></i> الطالب على مستوى جيد في جميع المهارات</div>`}
               </div>
             </div>
           </div>`;
@@ -1618,7 +1621,7 @@ function applyChartTheme() {
 function toggleDark() {
   document.body.classList.toggle('dark');
   const on = document.body.classList.contains('dark');
-  document.getElementById('darkBtn').textContent = on ? '☀️' : '🌙';
+  document.getElementById('darkIcon').className = on ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
   localStorage.setItem('spm_dark', on ? '1' : '');
   // Re-apply Chart.js theme and re-render current student's charts
   applyChartTheme();
@@ -1635,37 +1638,37 @@ function toggleDark() {
 const tourSteps = [
   {
     target: '#alertBanner',
-    title:  'شريط التنبيهات الذكية 🚨',
+    title:  'شريط التنبيهات الذكية',
     text:   'يظهر تلقائياً عند فتح اللوحة ويعرض الطلاب في خطر مرتفع أو متوسط. اضغط على أي تنبيه للانتقال مباشرة لملف الطالب.',
   },
   {
     target: '#studentList',
-    title:  'قائمة الطلاب مع البحث والفلترة 🔍',
+    title:  'قائمة الطلاب مع البحث والفلترة',
     text:   'ابحث بالاسم أو الرقم الجامعي، وفلتر حسب مستوى الخطر بضغطة واحدة. النقطة الملونة تعكس مؤشر الخطر لكل طالب.',
   },
   {
     target: '#kpiSection',
-    title:  'بطاقات الأداء الذكية 📊',
+    title:  'بطاقات الأداء الذكية',
     text:   '٤ مؤشرات تُحلل الطالب فوراً: الأعمال الحالية، التوقع النهائي بخوارزمية ذكية، مقارنة بمتوسط الفصل، والترتيب.',
   },
   {
     target: '#radarSection',
-    title:  'البصمة الأكاديمية 🕸️',
+    title:  'الخريطة الأكاديمية',
     text:   'مخطط عنكبوتي يعرض الطالب على ٦ محاور دفعة واحدة مع خط متقطع يمثّل متوسط الفصل للمقارنة الفورية.',
   },
   {
     target: '#whatIfSection',
-    title:  'محاكي "ماذا لو؟" 🎮',
+    title:  'محاكي "ماذا لو؟"',
     text:   'حرّك الشريط لترى: إذا حصل الطالب على X% في الاختبار النهائي، كانت درجته الكلية Y%. تفاعلي ومباشر.',
   },
   {
     target: '#msgSection',
-    title:  'مولّد الرسائل الذكية 📧',
-    text:   'رسالة رسمية جاهزة للطالب أو ولي أمره أو إحالة أكاديمية — تُبنى تلقائياً من بياناته. اضغط "نسخ" وأرسلها.',
+    title:  'مولّد الرسائل الذكية',
+    text:   'رسالة رسمية جاهزة للطالب أو إحالة أكاديمية — تُبنى تلقائياً من بياناته. اضغط "نسخ" وأرسلها.',
   },
   {
     target: '#intSection',
-    title:  'سجل التدخلات الأكاديمية 📝',
+    title:  'سجل التدخلات الأكاديمية',
     text:   'سجّل كل تدخل (تواصل / جلسة / إحالة) مع التاريخ والتفاصيل. يُحفظ في المتصفح ويبقى بعد إغلاق الصفحة.',
   },
 ];
@@ -1714,7 +1717,7 @@ function showTourStep() {
   const prevBtn = document.getElementById('tourPrev');
   const nextBtn = document.getElementById('tourNext');
   prevBtn.style.visibility = tourIdx === 0 ? 'hidden' : 'visible';
-  nextBtn.textContent = tourIdx === tourSteps.length - 1 ? '✅ إنهاء الجولة' : 'التالي ←';
+  nextBtn.innerHTML = tourIdx === tourSteps.length - 1 ? '<i class="bi bi-check-circle-fill"></i> إنهاء الجولة' : 'التالي ←';
 
   // ── Show overlay ──
   overlay.classList.add('active');
@@ -1808,7 +1811,7 @@ window.addEventListener('DOMContentLoaded', function() {
   // Restore dark mode preference
   if (localStorage.getItem('spm_dark')) {
     document.body.classList.add('dark');
-    document.getElementById('darkBtn').textContent = '☀️';
+    document.getElementById('darkIcon').className = 'bi bi-sun-fill';
   }
   applyChartTheme();
   renderSidebar();
