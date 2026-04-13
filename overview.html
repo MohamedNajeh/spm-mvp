@@ -21,7 +21,7 @@
            background: #f1f9f7; color: #111827; }
     .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
     .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .risk-dot.high { background:rgba(239,68,68,0.33); } .risk-dot.med { background:rgba(245,158,11,0.33); } .risk-dot.low { background:rgba(16,185,129,0.33); }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
 
     /* ── Modern Nav ── */
     .spm-nav {
@@ -514,7 +514,7 @@ function renderCharts() {
     data: {
       labels: ['مرتفع', 'متوسط', 'منخفض'],
       datasets: [{ data: [highCount, medCount, lowCount],
-        backgroundColor: ['rgba(239,68,68,0.33)','rgba(245,158,11,0.33)','rgba(16,185,129,0.33)'],
+        backgroundColor: ['#EF4444','#F59E0B','#10B981'],
         borderWidth: 3, borderColor: '#fff' }]
     },
     options: { plugins:{ legend:{ display:false } }, cutout:'70%' }
@@ -566,7 +566,7 @@ function renderCharts() {
       labels: ['الثالث','الرابع','الخامس'],
       datasets: [
         { label:'متوسط الأداء %', data:levelAvgs,  backgroundColor:'rgba(60,121,116,0.7)',  borderRadius:6, barThickness:28 },
-        { label:'خطر مرتفع',     data:levelHigh.map(v=>v*25), backgroundColor:'rgba(239,68,68,0.33)', borderRadius:6, barThickness:28 },
+        { label:'خطر مرتفع',     data:levelHigh.map(v=>v*25), backgroundColor:'#EF4444', borderRadius:6, barThickness:28 },
       ]
     },
     options: {
@@ -621,7 +621,6 @@ function renderTable() {
     const pred  = predictGrade(s);
     const intv  = getInterventions(s.id).length;
     const barCol = pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444';
-    const barColBg = pct>=70?'rgba(16,185,129,0.33)':pct>=50?'rgba(245,158,11,0.33)':'rgba(239,68,68,0.33)';
     const improv = allAfter[students.indexOf(s)] - allBefore[students.indexOf(s)];
     return `
       <tr>
@@ -637,7 +636,7 @@ function renderTable() {
         <td>
           <div style="font-weight:700;color:${barCol};font-size:14px;">${pct}%</div>
           <div class="prog-bg" style="width:90px;margin-top:4px;">
-            <div class="prog-fill" style="width:${pct}%;background:${barColBg};"></div>
+            <div class="prog-fill" style="width:${pct}%;background:${barCol};"></div>
           </div>
         </td>
         <td>

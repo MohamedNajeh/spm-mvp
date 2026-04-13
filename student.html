@@ -19,7 +19,7 @@
     body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background: #f1f9f7; }
     .bi { font-size: 1em; color: inherit; vertical-align: -0.1em; }
     .risk-dot { display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .risk-dot.high { background:rgba(239,68,68,0.33); } .risk-dot.med { background:rgba(245,158,11,0.33); } .risk-dot.low { background:rgba(16,185,129,0.33); }
+    .risk-dot.high { background:#EF4444; } .risk-dot.med { background:#F59E0B; } .risk-dot.low { background:#10B981; }
 
     /* ─── Login Screen ─── */
     #loginScreen {
@@ -792,13 +792,13 @@ function renderStudentDashboard(s){
           label:'قبل التدريب',
           data: before,
           borderColor:'#F59E0B', backgroundColor:'rgba(245,158,11,0.08)',
-          pointBackgroundColor:'rgba(245,158,11,0.33)', pointRadius:5, tension:0.3, spanGaps:false,
+          pointBackgroundColor:'#F59E0B', pointRadius:5, tension:0.3, spanGaps:false,
         },
         {
           label:'بعد التدريب',
           data: after,
           borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.08)',
-          pointBackgroundColor:'rgba(16,185,129,0.33)', pointRadius:5, tension:0.3, spanGaps:false,
+          pointBackgroundColor:'#10B981', pointRadius:5, tension:0.3, spanGaps:false,
         }
       ]
     },
@@ -1012,7 +1012,7 @@ function showQuizResults(result) {
           <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px;">
             <span>${sk}</span><span style="color:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};">${pct}%</span>
           </div>
-          <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%;background:${pct>=70?'rgba(16,185,129,0.33)':pct>=50?'rgba(245,158,11,0.33)':'rgba(239,68,68,0.33)'};"></div></div>
+          <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%;background:${pct>=70?'#10B981':pct>=50?'#F59E0B':'#EF4444'};"></div></div>
         </div>`).join('')}
     </div>
 
