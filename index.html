@@ -1248,7 +1248,8 @@ function renderMain(s) {
         <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:16px;">درجات الأعمال</div>
         ${Object.values(s.grades).map(g => {
           const gPct = Math.round(g.score / g.max * 100);
-          const col = gPct >= 70 ? '#10B981' : gPct >= 50 ? '#F59E0B' : '#EF4444';
+          const col    = gPct >= 70 ? '#10B981' : gPct >= 50 ? '#F59E0B' : '#EF4444';
+          const colBg  = gPct >= 70 ? 'rgba(16,185,129,0.33)' : gPct >= 50 ? 'rgba(245,158,11,0.33)' : 'rgba(239,68,68,0.33)';
           return `
             <div class="progress-bar-container">
               <div class="progress-label">
@@ -1256,7 +1257,7 @@ function renderMain(s) {
                 <span style="font-weight:700;">${g.score}/${g.max} <span style="color:${col};font-size:11px;">(${gPct}%)</span></span>
               </div>
               <div class="progress-bg">
-                <div class="progress-fill" style="width:${gPct}%;background:${col};"></div>
+                <div class="progress-fill" style="width:${gPct}%;background:${colBg};"></div>
               </div>
             </div>`;
         }).join('')}
@@ -1296,7 +1297,7 @@ function renderMain(s) {
               <span style="font-size:12px;font-weight:700;color:${skillColor(sk.score)};">${sk.score}% — ${skillLabel(sk.score)}</span>
             </div>
             <div class="skill-bar-bg">
-              <div class="skill-bar-fill" style="width:${sk.score}%;background:${skillColor(sk.score)};"></div>
+              <div class="skill-bar-fill" style="width:${sk.score}%;background:${sk.score>=70?'rgba(16,185,129,0.33)':sk.score>=40?'rgba(245,158,11,0.33)':'rgba(239,68,68,0.33)'};"></div>
             </div>
           </div>
         `).join('')}
