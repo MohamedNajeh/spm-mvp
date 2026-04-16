@@ -261,14 +261,14 @@
       display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
     .impact-val-badge {
-      width: 80px; height: 80px; border-radius: 50%;
+      width: 90px; height: 90px; border-radius: 50%;
       border: 2px solid rgba(255,255,255,0.35);
       box-shadow: 0 0 16px rgba(106,199,189,0.25);
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center; gap: 2px;
       background: rgba(255,255,255,0.08);
     }
-    .impact-card .i-val { font-size: 34px; font-weight: 900; color: white; line-height: 1; }
-    .impact-card .i-unit { color: var(--accent); font-size: 18px; font-weight: 800; }
+    .impact-card .i-val { font-size: 30px; font-weight: 900; color: white; line-height: 1; }
+    .impact-card .i-unit { color: var(--accent); font-size: 16px; font-weight: 800; line-height: 1; align-self: flex-end; padding-bottom: 3px; }
     .impact-card .i-lbl { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
 
     /* ── FOOTER ── */
@@ -522,37 +522,32 @@
 <div style="background:white;padding:80px 0;">
 <section style="padding:0 40px;">
   <div style="text-align:center;margin-bottom:48px;">
-    <div class="sec-label" style="text-align:center;">الأثر المتوقع</div>
-    <div class="sec-title" style="text-align:center;">أرقام تتحدث عن نفسها</div>
+    <div class="sec-title" style="text-align:center;">الأثر المتوقع</div>
   </div>
 
   <div class="impact-grid">
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="90">0</div>
+        <div class="i-val count" data-target="90">0</div><div class="i-unit">%</div>
       </div>
-      <div class="i-unit">%</div>
       <div class="i-lbl">تقليص وقت متابعة الطالب<br/>من ٤٥ دقيقة لأقل من ٥</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="3">0</div>
+        <div class="i-val count" data-target="3">0</div><div class="i-unit" style="font-size:13px;">بوابات</div>
       </div>
-      <div class="i-unit">بوابات</div>
       <div class="i-lbl">طالب • مرشد • إدارة<br/>ثلاث بوابات في منظومة واحدة</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="15">0</div>
+        <div class="i-val count" data-target="15">0</div><div class="i-unit">%</div>
       </div>
-      <div class="i-unit">%</div>
       <div class="i-lbl">تحسن متوسط الفصل<br/>بعد تطبيق برامج التدريب</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="100">0</div>
+        <div class="i-val count" data-target="100">0</div><div class="i-unit">%</div>
       </div>
-      <div class="i-unit">%</div>
       <div class="i-lbl">بيانات محلية آمنة<br/>لا خوادم — لا تكلفة تشغيل</div>
     </div>
   </div>
