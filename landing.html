@@ -186,7 +186,9 @@
       display: flex; align-items: center; justify-content: center;
       background: rgba(255,255,255,0.05);
     }
-    .hero-stat .val { font-size: 30px; font-weight: 900; color: white; line-height: 1; }
+    .hero-stat .v-num { white-space: nowrap; line-height: 1; }
+    .hero-stat .val { font-size: 30px; font-weight: 900; color: white; line-height: 1; display: inline; }
+    .hero-stat .v-unit { color: var(--accent); font-size: 16px; font-weight: 800; line-height: 1; display: inline; margin-right: 1px; }
     .hero-stat .lbl { font-size: 12px; color: rgba(255,255,255,0.72); line-height: 1.55; max-width: 120px; }
 
     /* ── SECTIONS ── */
@@ -371,21 +373,21 @@
     <div class="hero-stats fade-up delay-3">
       <div class="hero-stat">
         <div class="val-badge">
-          <div class="val count" data-target="30">0</div>
+          <span class="v-num"><span class="val count" data-target="30">0</span><span class="v-unit">%</span></span>
         </div>
-        <div class="lbl">% من الطلاب في خطر تعثر<br/>يمكن اكتشافه مبكراً</div>
+        <div class="lbl">من الطلاب في خطر تعثر<br/>يمكن اكتشافه مبكراً</div>
       </div>
       <div class="hero-stat">
         <div class="val-badge">
-          <div class="val count" data-target="45">0</div>
+          <span class="v-num"><span class="val count" data-target="45">0</span><span class="v-unit" style="font-size:13px;margin-right:3px;">د</span></span>
         </div>
         <div class="lbl">دقيقة يقضيها المرشد<br/>لمتابعة طالب واحد يدوياً</div>
       </div>
       <div class="hero-stat">
         <div class="val-badge">
-          <div class="val count" data-target="68">0</div>
+          <span class="v-num"><span class="val count" data-target="68">0</span><span class="v-unit">%</span></span>
         </div>
-        <div class="lbl">% من حالات التعثر يمكن<br/>تجنّبها بالتدخل المبكر</div>
+        <div class="lbl">من حالات التعثر يمكن<br/>تجنّبها بالتدخل المبكر</div>
       </div>
     </div>
   </div>
