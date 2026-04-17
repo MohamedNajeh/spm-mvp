@@ -250,7 +250,13 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; transition: transform 0.2s;
     }
     .feat-card:hover { transform: translateY(-3px); }
-    .feat-card .f-icon { font-size: 30px; margin-bottom: 12px; }
+    .feat-card .f-icon {
+      font-size: 30px; margin-bottom: 12px;
+      background: linear-gradient(135deg, #3c7974, #6ac7bd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
     .feat-card h4 { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 6px; }
     .feat-card p  { font-size: 12px; color: #6B7280; line-height: 1.6; }
 
