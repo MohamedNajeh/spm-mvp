@@ -264,11 +264,12 @@
       width: 90px; height: 90px; border-radius: 50%;
       border: 2px solid rgba(255,255,255,0.35);
       box-shadow: 0 0 16px rgba(106,199,189,0.25);
-      display: flex; align-items: baseline; justify-content: center; gap: 2px;
+      display: flex; align-items: center; justify-content: center;
       background: rgba(255,255,255,0.08);
     }
-    .impact-card .i-val { font-size: 30px; font-weight: 900; color: white; line-height: 1; }
-    .impact-card .i-unit { color: var(--accent); font-size: 16px; font-weight: 800; line-height: 1; }
+    .impact-card .i-num { white-space: nowrap; line-height: 1; }
+    .impact-card .i-val { font-size: 30px; font-weight: 900; color: white; line-height: 1; display: inline; }
+    .impact-card .i-unit { color: var(--accent); font-size: 16px; font-weight: 800; line-height: 1; display: inline; margin-right: 1px; }
     .impact-card .i-lbl { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
 
     /* ── FOOTER ── */
@@ -528,25 +529,25 @@
   <div class="impact-grid">
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="90">0</div><div class="i-unit">%</div>
+        <span class="i-num"><span class="i-val count" data-target="90">0</span><span class="i-unit">%</span></span>
       </div>
       <div class="i-lbl">تقليص وقت متابعة الطالب<br/>من ٤٥ دقيقة لأقل من ٥</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="3">0</div><div class="i-unit" style="font-size:13px;">بوابات</div>
+        <span class="i-num"><span class="i-val count" data-target="3">0</span><span class="i-unit" style="font-size:12px;margin-right:4px;">بوابات</span></span>
       </div>
       <div class="i-lbl">طالب • مرشد • إدارة<br/>ثلاث بوابات في منظومة واحدة</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="15">0</div><div class="i-unit">%</div>
+        <span class="i-num"><span class="i-val count" data-target="15">0</span><span class="i-unit">%</span></span>
       </div>
       <div class="i-lbl">تحسن متوسط الفصل<br/>بعد تطبيق برامج التدريب</div>
     </div>
     <div class="impact-card">
       <div class="impact-val-badge">
-        <div class="i-val count" data-target="100">0</div><div class="i-unit">%</div>
+        <span class="i-num"><span class="i-val count" data-target="100">0</span><span class="i-unit">%</span></span>
       </div>
       <div class="i-lbl">بيانات محلية آمنة<br/>لا خوادم — لا تكلفة تشغيل</div>
     </div>
